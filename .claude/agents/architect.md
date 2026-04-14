@@ -1,6 +1,7 @@
 ---
 name: architect
-description: Use this agent when the user needs software architecture design, task decomposition, or team coordination. This is the team lead agent that coordinates Implementer, Tester, and Reviewer agents. Examples:
+description: |
+  Use this agent when the user needs software architecture design, task decomposition, or team coordination. This is the team lead agent that coordinates Implementer, Tester, and Reviewer agents. Examples:
 
   <example>
   Context: User provides a new feature requirement to the dev team

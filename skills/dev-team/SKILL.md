@@ -33,11 +33,33 @@ The team uses worktree branches for isolation, so the project needs a git reposi
 
 Use TeamCreate with team name `dev-team`. This creates the shared task list that all agents coordinate through.
 
-### Step 3: Create the initial requirement task
+### Step 3: Initialize team memory
+
+Check if `.claude/team-memory/MEMORY.md` exists. If not, create the directory and seed file:
+
+```
+mkdir -p .claude/team-memory
+```
+
+Then create `.claude/team-memory/MEMORY.md` with the seed content:
+
+```markdown
+# Dev Team Shared Memory
+
+All agents: read this file at the start of every task. User preferences here ALWAYS override defaults, conventions, and your own judgment.
+
+Read individual memory files for details. Update this index and create new memory files when you learn new preferences.
+
+<!-- Keep this index under 50 lines. Prune stale entries. -->
+```
+
+This ensures the memory directory exists before agents start reading it.
+
+### Step 4: Create the initial requirement task
 
 Use TaskCreate to capture the user's requirement as the first task on the shared task list. This is what the Architect picks up and decomposes.
 
-### Step 4: Spawn the Architect
+### Step 5: Spawn the Architect
 
 Spawn the Architect as a teammate using the Agent tool with `team_name: "dev-team"` and `name: "architect"`. Use the `architect` subagent_type.
 
@@ -49,7 +71,7 @@ Include in the prompt:
 - That high-level design decisions must be escalated to the user — present the technical approach before assigning work
 - The team name (`dev-team`) so the Architect can read the team config
 
-### Step 5: Spawn the remaining agents
+### Step 6: Spawn the remaining agents
 
 Spawn all seven in parallel using the Agent tool, each with `team_name: "dev-team"`:
 
@@ -82,7 +104,7 @@ Spawn all seven in parallel using the Agent tool, each with `team_name: "dev-tea
 - It works in an isolated temp directory, using only Bash
 - It must never read source code
 
-### Step 6: Report to user
+### Step 7: Report to user
 
 Tell the user:
 - The dev team is up and running

@@ -6,7 +6,7 @@ description: |
 
 # Dev Team Launcher
 
-Launch a coordinated 4-agent development team and hand off the user's requirement to the Architect.
+Launch a coordinated 8-agent development team and hand off the user's requirement to the Architect.
 
 The user's requirement is the argument passed to this skill. If no argument was provided, ask what they want the team to build before proceeding.
 
@@ -18,6 +18,10 @@ The user's requirement is the argument passed to this skill. If no argument was 
 | **Implementer** | Writes feature code on `feat/` worktree branches | All |
 | **Tester** | Writes & runs tests on `test/` worktree branches, produces test reports | All |
 | **Reviewer** | Reviews code & tests, provides structured feedback with severity levels | Read, Grep, Glob, Bash |
+| **Critique** | Final gate — plan adherence, first-principles challenge, UX scrutiny | Read, Grep, Glob, Bash |
+| **Documenter** | Writes/maintains user-facing documentation after implementation; docs must be self-sufficient for users with no source code | All |
+| **Instructor** | Designs realistic user tasks, dispatches to Noob, diagnoses usability failures, produces UX report | Read, Grep, Glob, Bash |
+| **Noob** | Simulates naive first-time user — tests software using ONLY docs, help text, and error messages (no source code) | Bash |
 
 ## Launch Sequence
 
@@ -40,13 +44,14 @@ Spawn the Architect as a teammate using the Agent tool with `team_name: "dev-tea
 Include in the prompt:
 - The user's full requirement (verbatim)
 - That three teammates are available: `implementer`, `tester`, `reviewer`
+- Four more teammates handle the post-review pipeline: `critique`, `documenter`, `instructor`, `noob`
 - The workflow: Implementer and Tester work in parallel on separate worktree branches (`feat/` and `test/`), then Reviewer reviews both
 - That high-level design decisions must be escalated to the user — present the technical approach before assigning work
 - The team name (`dev-team`) so the Architect can read the team config
 
 ### Step 5: Spawn the remaining agents
 
-Spawn all three in parallel using the Agent tool, each with `team_name: "dev-team"`:
+Spawn all seven in parallel using the Agent tool, each with `team_name: "dev-team"`:
 
 **Implementer** — `name: "implementer"`, subagent_type `implementer`
 - Tell it the Architect is the team lead and will assign tasks
@@ -59,6 +64,23 @@ Spawn all three in parallel using the Agent tool, each with `team_name: "dev-tea
 **Reviewer** — `name: "reviewer"`, subagent_type `reviewer`
 - Tell it the Architect is the team lead and will assign review tasks
 - It should check the task list for work and wait for assignment
+
+**Critique** — `name: "critique"`, subagent_type `critique`
+- Tell it the Architect assigns critique tasks after Reviewer approval
+- It is the final gate before usability testing begins
+
+**Documenter** — `name: "documenter"`, subagent_type `documenter`
+- Tell it the Architect assigns documentation tasks after implementation passes review
+- It writes user-facing docs on the feat/ branch
+
+**Instructor** — `name: "instructor"`, subagent_type `instructor`
+- Tell it the Architect assigns usability testing tasks after Documenter finishes
+- It designs user tasks and dispatches them to the Noob
+
+**Noob** — `name: "noob"`, subagent_type `noob`
+- Tell it the Instructor will send tasks
+- It works in an isolated temp directory, using only Bash
+- It must never read source code
 
 ### Step 6: Report to user
 
@@ -75,7 +97,10 @@ User requirement
   → Architect (decomposes, designs, presents approach for user approval)
     → parallel: Implementer (feat/ branch) + Tester (test/ branch)
       → Reviewer (reviews code + tests, structured feedback)
-        → Architect (merges if approved, or routes feedback for fixes)
+        → Critique (plan adherence, first-principles challenge, UX scrutiny)
+          → Documenter (writes/updates user-facing documentation)
+            → Instructor + Noob (usability testing — Instructor dispatches tasks, Noob attempts them)
+              → Architect (merges if usability passes, or routes findings for fixes)
 ```
 
 ## Key Rules
@@ -85,3 +110,4 @@ User requirement
 - The Reviewer provides structured feedback with severity levels: blockers (must fix) vs. suggestions (nice to have)
 - If Reviewer requests changes, Architect routes feedback to the right agent, waits for fixes, then triggers re-review
 - After Reviewer approves, Architect merges branches and reports completion
+- After Reviewer and Critique approve, the Architect triggers the usability testing phase: Documenter writes docs, then Instructor+Noob test usability. The Architect cannot claim final completion until usability testing passes.

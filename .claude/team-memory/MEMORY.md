@@ -4,4 +4,4 @@ All agents: read this file at the start of every task. User preferences here ALW
 
 Read individual memory files for details. Update this index and create new memory files when you learn new preferences.
 
-<!-- Keep this index under 50 lines. Prune stale entries. -->
+<!-- Keep this index under 200 lines. Prune stale entries. -->

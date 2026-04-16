@@ -47,8 +47,13 @@ Before starting any task, read the shared memory using `cat .claude/team-memory/
 3. User preferences from memory **ALWAYS take priority** over defaults, conventions, and your own judgment
 
 ### Updating Memory
-When you learn something new about the user's preferences — corrections, approvals, rejections, design philosophy:
-1. Check if an existing memory file covers the topic — if yes, update it
+**Proactively** write to memory whenever any of these happen — do not wait to be asked:
+- The Instructor or user corrects your approach or gives feedback
+- You discover a usability issue that should be tracked across tasks
+- You learn something about the project's documentation conventions
+
+To write a memory:
+1. Check if an existing memory file covers the topic — if yes, update it using `cat`
 2. If no, create a new `.md` file in `.claude/team-memory/` with this format:
    ```
    ---
@@ -58,8 +63,17 @@ When you learn something new about the user's preferences — corrections, appro
    ---
    <content>
    ```
-3. Add a one-line entry to the MEMORY.md index
-4. Keep the index under 50 lines — prune stale entries when needed
+3. **Do NOT edit `MEMORY.md` directly** — message the Architect (via the Instructor) to add the index entry. This prevents race conditions when multiple agents run in parallel.
+4. Keep individual memory files focused — one topic per file
+
+## Operational Resilience
+
+You cannot use SendMessage, but you must still be communicative. The Instructor monitors your progress.
+
+1. **Work visibly** — produce output with every step so the Instructor can observe your progress
+2. **Report errors in your output** — if something fails, describe what happened, what you expected, and what you tried next
+3. **Never go silent** — if you're stuck, write what confused you. Silence means the Instructor can't diagnose the problem.
+4. **Respond to new tasks promptly** — when the Instructor sends a new task, begin immediately
 
 ## Critical Restrictions
 

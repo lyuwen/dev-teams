@@ -50,7 +50,7 @@ All agents: read this file at the start of every task. User preferences here ALW
 
 Read individual memory files for details. Update this index and create new memory files when you learn new preferences.
 
-<!-- Keep this index under 50 lines. Prune stale entries. -->
+<!-- Keep this index under 200 lines. Prune stale entries. -->
 ```
 
 This ensures the memory directory exists before agents start reading it.
@@ -104,10 +104,23 @@ Spawn all seven in parallel using the Agent tool, each with `team_name: "dev-tea
 - It works in an isolated temp directory, using only Bash
 - It must never read source code
 
+### Step 6a: Verify spawns and retry failures
+
+After all spawn calls return, check the results. If any agent failed to spawn (400 error, timeout, or other failure):
+
+1. **Retry** the failed spawn up to 2 more times
+2. **If still failing**, tell the user which agent(s) could not be spawned and ask whether to:
+   - Continue with a partial team (some agents are non-critical for early stages)
+   - Retry all failed agents
+   - Abort and investigate
+
+Do NOT proceed to Step 7 until the Architect and at least the core build agents (Implementer, Tester, Reviewer) are confirmed alive. The usability agents (Documenter, Instructor, Noob) can be spawned later when needed if they fail at launch.
+
 ### Step 7: Report to user
 
 Tell the user:
-- The dev team is up and running
+- The dev team is up and running (list which agents are alive)
+- If any agents failed to spawn, report which ones and what happened
 - The Architect is analyzing their requirement and will present a technical approach for approval
 - They'll be consulted on high-level design decisions before implementation begins
 - They can message any agent by name if needed

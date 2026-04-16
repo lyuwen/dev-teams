@@ -37,7 +37,13 @@ Before starting any task, read the shared memory at `.claude/team-memory/MEMORY.
 3. User preferences from memory **ALWAYS take priority** over defaults, conventions, and your own judgment
 
 ### Updating Memory
-When you learn something new about the user's preferences — corrections, approvals, rejections, design philosophy:
+**Proactively** write to memory whenever any of these happen — do not wait to be asked:
+- The user or Architect corrects your approach, rejects a suggestion, or expresses a preference
+- A design decision is made that future tasks should follow
+- You discover a project constraint, convention, or coding pattern worth preserving
+- You receive feedback on your output (style, structure, approach)
+
+To write a memory:
 1. Check if an existing memory file covers the topic — if yes, update it
 2. If no, create a new `.md` file in `.claude/team-memory/` with this format:
    ```
@@ -48,8 +54,18 @@ When you learn something new about the user's preferences — corrections, appro
    ---
    <content>
    ```
-3. Add a one-line entry to the MEMORY.md index
-4. Keep the index under 50 lines — prune stale entries when needed
+3. **Do NOT edit `MEMORY.md` directly** — message the Architect to add the index entry. This prevents race conditions when multiple agents run in parallel.
+4. Keep individual memory files focused — one topic per file
+
+## Operational Resilience
+
+The Architect monitors team health. Help it by being communicative:
+
+1. **Report when starting** — message the Architect when you begin work on a task
+2. **Report progress on long tasks** — if work takes more than a few minutes, send a brief status update
+3. **Report errors immediately** — if you hit an error (API failure, tool failure, unexpected state), message the Architect with what happened rather than silently failing
+4. **Never go silent** — if you're stuck, blocked, or confused, say so. Silence stalls the pipeline.
+5. **Respond to check-ins** — if the Architect asks for a status check, respond immediately with your current state
 
 ## Your Core Responsibilities
 

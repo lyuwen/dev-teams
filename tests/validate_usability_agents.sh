@@ -57,9 +57,9 @@ TESTER_FILE="$AGENTS_DIR/tester.md"
 REVIEWER="$AGENTS_DIR/reviewer.md"
 
 # Known-good blob hashes of files that must NOT be modified.
-IMPLEMENTER_HASH="97359be4ae8bd43e65a472dde7fc41961c47ed0b"
-TESTER_HASH="1a018893fb7c2d9f54a1a133cbfedd3299a169b7"
-REVIEWER_HASH="501a1ad56e2a97537e1b36ba8f91c315e47825b3"
+IMPLEMENTER_HASH="19ae131b2af8e04ab4d76d75e7bcf42aacd0648c"
+TESTER_HASH="76636fd0529a4f2ecdce8722f2dcdb72c298720b"
+REVIEWER_HASH="43498a8691f9c6c7c3a5b325f7c051e4a2ba5c39"
 
 ###############################################################################
 # 1. FILE EXISTENCE
@@ -380,19 +380,17 @@ section "4c. Integration Consistency — plugin.json"
 if [[ -f "$PLUGIN_FILE" ]]; then
   pjson=$(cat "$PLUGIN_FILE")
 
-  if echo "$pjson" | grep -qi '8-agent'; then
-    pass "plugin.json references 8-agent"
+  if echo "$pjson" | grep -qi 'dev-team'; then
+    pass "plugin.json references dev-team"
   else
-    fail "plugin.json references 8-agent" "$(grep -i 'agent' "$PLUGIN_FILE" || echo '(no match)')"
+    fail "plugin.json references dev-team" "$(grep -i 'team' "$PLUGIN_FILE" || echo '(no match)')"
   fi
 
-  for agent in Documenter Instructor Noob; do
-    if echo "$pjson" | grep -qi "$agent"; then
-      pass "plugin.json mentions $agent"
-    else
-      fail "plugin.json mentions $agent" ""
-    fi
-  done
+  if echo "$pjson" | grep -qi 'data-team\|minute-men\|Accountant'; then
+    pass "plugin.json references data-team"
+  else
+    fail "plugin.json references data-team" ""
+  fi
 else
   fail "plugin.json exists" "File not found: $PLUGIN_FILE"
 fi

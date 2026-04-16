@@ -1,3 +1,5 @@
+> **Historical document.** This was the original design spec for the initial 4-agent team. The repo now has 8 agents living at `agents/` in the plugin root. See `README.md` for current structure.
+
 # Dev Team Agents Design
 
 ## Overview

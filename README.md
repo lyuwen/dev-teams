@@ -73,25 +73,22 @@ This means agents remember your design philosophy, coding preferences, and past 
 
 ```
 dev-teams/
-  .claude/
-    agents/
-      architect.md
-      implementer.md
-      tester.md
-      reviewer.md
-      critique.md
-      documenter.md
-      instructor.md
-      noob.md
-    team-memory/
-      MEMORY.md
+  agents/                          # Agent definitions (plugin auto-discovery)
+    architect.md
+    implementer.md
+    tester.md
+    reviewer.md
+    critique.md
+    documenter.md
+    instructor.md
+    noob.md
   .claude-plugin/
     plugin.json
   skills/
     dev-team/
-      SKILL.md          # Launcher — spawns the team
+      SKILL.md                     # Launcher — spawns the team
     dev-team-help/
-      SKILL.md          # Explains how the system works
+      SKILL.md                     # Explains how the system works
   tests/
     validate_usability_agents.sh
 ```

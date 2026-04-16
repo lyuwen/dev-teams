@@ -1,3 +1,5 @@
+> **Historical document.** This was the implementation plan for the initial 4-agent team. The repo now has 8 agents living at `agents/` in the plugin root. See `README.md` for current structure.
+
 # Dev Team Agents Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

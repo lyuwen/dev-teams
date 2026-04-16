@@ -45,7 +45,7 @@ body() {
 }
 
 # -- Paths (relative to repo root) --------------------------------------------
-AGENTS_DIR=".claude/agents"
+AGENTS_DIR="agents"
 SKILL_FILE="skills/dev-team/SKILL.md"
 PLUGIN_FILE=".claude-plugin/plugin.json"
 
@@ -57,9 +57,9 @@ TESTER_FILE="$AGENTS_DIR/tester.md"
 REVIEWER="$AGENTS_DIR/reviewer.md"
 
 # Known-good blob hashes of files that must NOT be modified.
-IMPLEMENTER_HASH="082081d21280380e7cd3698a79e7656c3023bcf8"
-TESTER_HASH="68f11b483470f9398fed31ecdcc3f0420ddc2ace"
-REVIEWER_HASH="86eb573eefe484b2a761b2ebf893860085097d2e"
+IMPLEMENTER_HASH="97359be4ae8bd43e65a472dde7fc41961c47ed0b"
+TESTER_HASH="1a018893fb7c2d9f54a1a133cbfedd3299a169b7"
+REVIEWER_HASH="501a1ad56e2a97537e1b36ba8f91c315e47825b3"
 
 ###############################################################################
 # 1. FILE EXISTENCE

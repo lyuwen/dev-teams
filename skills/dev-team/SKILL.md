@@ -1,7 +1,7 @@
 ---
 name: dev-team
 description: |
-  Launch a coordinated development team with Architect, Implementer, Tester, and Reviewer agents. This skill should be used whenever the user wants to build a feature, start a project, implement something substantial, or delegate development work to a team of agents. Trigger this when the user says things like "launch the dev team", "spin up the team", "build this with the team", "use the dev team to...", "have the team implement...", or describes a development task and wants coordinated agents to handle it — even if they don't explicitly say "team" or "agents". If the user describes a multi-step development task (building a CLI tool, adding a module, creating a library), this skill is likely what they need. The argument is the requirement to pass to the Architect.
+  Launch a coordinated development team with Architect, Implementer, Tester, Reviewer, Critique, Documenter, Instructor, and Noob agents. This skill should be used whenever the user wants to build a feature, start a project, implement something substantial, or delegate development work to a team of agents. Trigger this when the user says things like "launch the dev team", "spin up the team", "build this with the team", "use the dev team to...", "have the team implement...", or describes a development task and wants coordinated agents to handle it — even if they don't explicitly say "team" or "agents". If the user describes a multi-step development task (building a CLI tool, adding a module, creating a library), this skill is likely what they need. The argument is the requirement to pass to the Architect.
 ---
 
 # Dev Team Launcher
@@ -65,10 +65,10 @@ Spawn the Architect as a teammate using the Agent tool with `team_name: "dev-tea
 
 Include in the prompt:
 - The user's full requirement (verbatim)
-- That three teammates are available: `implementer`, `tester`, `reviewer`
-- Four more teammates handle the post-review pipeline: `critique`, `documenter`, `instructor`, `noob`
-- The workflow: Implementer and Tester work in parallel on separate worktree branches (`feat/` and `test/`), then Reviewer reviews both
+- That seven teammates are available: `implementer`, `tester`, `reviewer`, `critique`, `documenter`, `instructor`, `noob`
+- The workflow: Implementer and Tester work in parallel on separate worktree branches (`feat/` and `test/`), then Reviewer reviews both, then Critique does a final deep-dive, then Documenter writes docs, then Instructor+Noob run usability testing
 - That high-level design decisions must be escalated to the user — present the technical approach before assigning work
+- That BOTH the Reviewer and Critique must pass before proceeding to usability testing — Reviewer approval alone is not sufficient
 - The team name (`dev-team`) so the Architect can read the team config
 
 ### Step 6: Spawn the remaining agents
@@ -131,5 +131,6 @@ User requirement
 - High-level design choices (library selection, API design, data formats) are escalated to the user
 - The Reviewer provides structured feedback with severity levels: blockers (must fix) vs. suggestions (nice to have)
 - If Reviewer requests changes, Architect routes feedback to the right agent, waits for fixes, then triggers re-review
-- After Reviewer approves, Architect merges branches and reports completion
-- After Reviewer and Critique approve, the Architect triggers the usability testing phase: Documenter writes docs, then Instructor+Noob test usability. The Architect cannot claim final completion until usability testing passes.
+- After Reviewer and Critique both approve, the Architect triggers the usability testing phase: Documenter writes docs, then Instructor+Noob test usability
+- The Architect cannot claim final completion until usability testing passes
+- After usability testing passes, Architect merges branches and reports completion

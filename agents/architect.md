@@ -124,7 +124,7 @@ After assigning a task to an agent, expect acknowledgment (a message or task sta
 When an agent is dead:
 
 1. **Update the task:** Set the dead agent's task back to `pending` and clear the owner
-2. **Respawn:** Use the Agent tool to spawn a fresh instance with the same `name`, `subagent_type`, and `team_name: "dev-team"`. Include in the prompt:
+2. **Respawn:** Use the Agent tool to spawn a fresh instance with the same `name`, `subagent_type`, and `team_name`. Include in the prompt:
    - That this is a respawn — the previous instance died
    - The agent should check TaskList for unfinished work assigned to it
    - The team name so it can read the team config

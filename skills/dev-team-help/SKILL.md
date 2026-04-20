@@ -60,7 +60,8 @@ All agents share a persistent memory at `.claude/team-memory/`:
 - **`MEMORY.md`** — Index file every agent reads before starting any task
 - **Topic files** — Individual files for user preferences, design decisions, corrections
 - **User preferences always win** — they override agent defaults, conventions, and judgment
-- Agents proactively update memory when they learn new preferences
+- The Architect proactively indexes reusable preferences and decisions; other agents create topic files and notify the Architect to add index entries
+- Dev-team launches use a project-scoped runtime team so shared memory stays attached to the current repository
 
 This means the team remembers your design philosophy, coding preferences, and past corrections without you repeating yourself.
 

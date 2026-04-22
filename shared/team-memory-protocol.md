@@ -19,14 +19,16 @@ Only **team leads** (Architect, Accountant) write to the `MEMORY.md` index file.
 - **Architect** owns entries prefixed with `dev-*`
 - **Accountant** owns entries prefixed with `data-*`
 
-### Atomic Write Protocol for Team Leads
+### Write Protocol for Team Leads
+
+Each team lead owns a disjoint prefix (`dev-*` / `data-*`), so concurrent edits rarely touch the same lines. When two leads do write at the same time, the last writer wins — this is acceptable because team-lead writes are infrequent and the prefix convention limits the overlap.
 
 When updating `MEMORY.md`:
 
 1. Read current `MEMORY.md`
 2. Write updated content to `.claude/team-memory/.MEMORY.md.tmp`
-3. Atomic `mv .claude/team-memory/.MEMORY.md.tmp .claude/team-memory/MEMORY.md`
-4. If the `mv` fails (another writer won), re-read and retry
+3. `mv .claude/team-memory/.MEMORY.md.tmp .claude/team-memory/MEMORY.md` (produces a complete file, never a partial write)
+4. Only edit lines/sections that belong to your prefix — leave the other team's entries untouched
 
 ### When to Update Memory (Team Leads)
 

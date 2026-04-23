@@ -57,9 +57,9 @@ TESTER_FILE="$AGENTS_DIR/tester.md"
 REVIEWER="$AGENTS_DIR/reviewer.md"
 
 # Known-good blob hashes of files that must NOT be modified.
-IMPLEMENTER_HASH="97359be4ae8bd43e65a472dde7fc41961c47ed0b"
-TESTER_HASH="1a018893fb7c2d9f54a1a133cbfedd3299a169b7"
-REVIEWER_HASH="501a1ad56e2a97537e1b36ba8f91c315e47825b3"
+IMPLEMENTER_HASH="19ae131b2af8e04ab4d76d75e7bcf42aacd0648c"
+TESTER_HASH="76636fd0529a4f2ecdce8722f2dcdb72c298720b"
+REVIEWER_HASH="43498a8691f9c6c7c3a5b325f7c051e4a2ba5c39"
 
 ###############################################################################
 # 1. FILE EXISTENCE
@@ -380,27 +380,100 @@ section "4c. Integration Consistency — plugin.json"
 if [[ -f "$PLUGIN_FILE" ]]; then
   pjson=$(cat "$PLUGIN_FILE")
 
-  if echo "$pjson" | grep -qi '8-agent'; then
-    pass "plugin.json references 8-agent"
+  if echo "$pjson" | grep -qi 'dev-team'; then
+    pass "plugin.json references dev-team"
   else
-    fail "plugin.json references 8-agent" "$(grep -i 'agent' "$PLUGIN_FILE" || echo '(no match)')"
+    fail "plugin.json references dev-team" "$(grep -i 'team' "$PLUGIN_FILE" || echo '(no match)')"
   fi
 
-  for agent in Documenter Instructor Noob; do
-    if echo "$pjson" | grep -qi "$agent"; then
-      pass "plugin.json mentions $agent"
-    else
-      fail "plugin.json mentions $agent" ""
-    fi
-  done
+  if echo "$pjson" | grep -qi 'data-team\|minute-men\|Accountant'; then
+    pass "plugin.json references data-team"
+  else
+    fail "plugin.json references data-team" ""
+  fi
 else
   fail "plugin.json exists" "File not found: $PLUGIN_FILE"
 fi
 
 ###############################################################################
-# 5. EXISTING FILES NOT MODIFIED
+# 5. DATA TEAM & SHARED INFRASTRUCTURE
 ###############################################################################
-section "5. Existing Files Not Modified"
+section "5. Data Team — File Existence"
+
+ACCOUNTANT="$AGENTS_DIR/accountant.md"
+MINUTEMAN="$AGENTS_DIR/minuteman.md"
+DATA_SKILL="skills/data-team/SKILL.md"
+DATA_HELP_SKILL="skills/data-team-help/SKILL.md"
+
+for f in "$ACCOUNTANT" "$MINUTEMAN" "$DATA_SKILL" "$DATA_HELP_SKILL"; do
+  if [[ -f "$f" ]]; then
+    pass "$f exists"
+  else
+    fail "$f exists" "File not found: $f"
+  fi
+done
+
+section "5b. Shared Protocols — File Existence"
+
+SHARED_DIR="shared"
+SHARED_MEMORY="$SHARED_DIR/team-memory-protocol.md"
+SHARED_RESILIENCE="$SHARED_DIR/operational-resilience.md"
+SHARED_CROSSTEAM="$SHARED_DIR/cross-team-protocol.md"
+
+for f in "$SHARED_MEMORY" "$SHARED_RESILIENCE" "$SHARED_CROSSTEAM"; do
+  if [[ -f "$f" ]]; then
+    pass "$f exists"
+  else
+    fail "$f exists" "File not found: $f"
+  fi
+done
+
+section "5c. Shared Protocol Cross-References"
+
+# Every agent must reference the two universal shared protocols
+for agent_file in "$AGENTS_DIR"/*.md; do
+  label="$(basename "$agent_file")"
+  for protocol in "shared/team-memory-protocol.md" "shared/operational-resilience.md"; do
+    proto_name="$(basename "$protocol" .md)"
+    if grep -q "$protocol" "$agent_file"; then
+      pass "$label references $proto_name"
+    else
+      fail "$label references $proto_name" "No reference to $protocol found"
+    fi
+  done
+done
+
+# Committee members must reference cross-team-protocol
+for agent_name in architect accountant critique reviewer; do
+  agent_file="$AGENTS_DIR/${agent_name}.md"
+  if [[ -f "$agent_file" ]]; then
+    if grep -q "shared/cross-team-protocol.md" "$agent_file"; then
+      pass "${agent_name}.md references cross-team-protocol"
+    else
+      fail "${agent_name}.md references cross-team-protocol" "Committee member missing cross-team reference"
+    fi
+  fi
+done
+
+section "5d. Team Lead Role Tags"
+
+# Only architect and accountant should have team-lead role
+for agent_file in "$AGENTS_DIR"/*.md; do
+  label="$(basename "$agent_file")"
+  agent_name="$(basename "$agent_file" .md)"
+  if grep -q 'you are a \*\*team lead\*\*' "$agent_file"; then
+    if [[ "$agent_name" == "architect" || "$agent_name" == "accountant" ]]; then
+      pass "$label correctly claims team-lead role"
+    else
+      fail "$label claims team-lead role" "Only architect and accountant should be team leads"
+    fi
+  fi
+done
+
+###############################################################################
+# 6. EXISTING FILES NOT MODIFIED
+###############################################################################
+section "6. Existing Files Not Modified"
 
 check_unchanged() {
   local file="$1"

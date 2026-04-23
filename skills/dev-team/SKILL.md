@@ -31,7 +31,14 @@ The team uses worktree branches for isolation, so the project needs a git reposi
 
 ### Step 2: Create the team
 
-Use TeamCreate with team name `dev-team`. This creates the shared task list that all agents coordinate through.
+Derive a **project-scoped** team name for the current repository and reuse it for the entire launch flow.
+
+- Start with a readable base like `dev-team-<repo-basename>`
+- If a team with that name already exists and points at the current repository, reuse it
+- If it exists but points at a different repository/session, derive a suffixed variant and use that instead
+- Use this same team name for `TeamCreate`, the Architect spawn, every teammate spawn, retries, and user-facing status updates
+
+Use `TeamCreate` with that project-scoped team name. This creates the shared task list that all agents coordinate through.
 
 ### Step 3: Initialize team memory
 
@@ -61,7 +68,7 @@ Use TaskCreate to capture the user's requirement as the first task on the shared
 
 ### Step 5: Spawn the Architect
 
-Spawn the Architect as a teammate using the Agent tool with `team_name: "dev-team"` and `name: "architect"`. Use the `architect` subagent_type.
+Spawn the Architect as a teammate using the Agent tool with the derived `team_name` and `name: "architect"`. Use the `architect` subagent_type.
 
 Include in the prompt:
 - The user's full requirement (verbatim)
@@ -69,38 +76,54 @@ Include in the prompt:
 - The workflow: Implementer and Tester work in parallel on separate worktree branches (`feat/` and `test/`), then Reviewer reviews both, then Critique does a final deep-dive, then Documenter writes docs, then Instructor+Noob run usability testing
 - That high-level design decisions must be escalated to the user — present the technical approach before assigning work
 - That BOTH the Reviewer and Critique must pass before proceeding to usability testing — Reviewer approval alone is not sufficient
-- The team name (`dev-team`) so the Architect can read the team config
+- The derived `team_name` so the Architect can read the team config
+- That the Architect should read `.claude/team-memory/MEMORY.md` before analyzing the requirement
+- That the Architect must proactively update/index team memory when the user confirms preferences, decisions, or corrections
 
 ### Step 6: Spawn the remaining agents
 
-Spawn all seven in parallel using the Agent tool, each with `team_name: "dev-team"`:
+Spawn all seven in parallel using the Agent tool, each with the derived `team_name`:
 
 **Implementer** — `name: "implementer"`, subagent_type `implementer`
 - Tell it the Architect is the team lead and will assign tasks
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It should check the task list for work and wait for assignment
 
 **Tester** — `name: "tester"`, subagent_type `tester`
 - Tell it the Architect is the team lead and will assign tasks
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It should check the task list for work and wait for assignment
 
 **Reviewer** — `name: "reviewer"`, subagent_type `reviewer`
 - Tell it the Architect is the team lead and will assign review tasks
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It should check the task list for work and wait for assignment
 
 **Critique** — `name: "critique"`, subagent_type `critique`
 - Tell it the Architect assigns critique tasks after Reviewer approval
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It is the final gate before usability testing begins
 
 **Documenter** — `name: "documenter"`, subagent_type `documenter`
 - Tell it the Architect assigns documentation tasks after implementation passes review
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It writes user-facing docs on the feat/ branch
 
 **Instructor** — `name: "instructor"`, subagent_type `instructor`
 - Tell it the Architect assigns usability testing tasks after Documenter finishes
+- It should read `.claude/team-memory/MEMORY.md` at the start of each task
+- It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
 - It designs user tasks and dispatches them to the Noob
 
 **Noob** — `name: "noob"`, subagent_type `noob`
 - Tell it the Instructor will send tasks
+- It should read `.claude/team-memory/MEMORY.md` before each task using Bash-only tools
+- It should report reusable preference/correction findings back through the Instructor so the Architect can index them
 - It works in an isolated temp directory, using only Bash
 - It must never read source code
 
@@ -120,6 +143,7 @@ Do NOT proceed to Step 7 until the Architect and at least the core build agents 
 
 Tell the user:
 - The dev team is up and running (list which agents are alive)
+- Which project-scoped team name is active for this repository
 - If any agents failed to spawn, report which ones and what happened
 - The Architect is analyzing their requirement and will present a technical approach for approval
 - They'll be consulted on high-level design decisions before implementation begins

@@ -269,6 +269,64 @@ When minute-men report ad-hoc workarounds:
 4. **Write a PRD** to `docs/prd/YYYY-MM-DD-<topic>.md` following the format in `shared/cross-team-protocol.md`
 5. **Send to the Architect** via SendMessage with the PRD path
 
+
+## Production vs. Ad-Hoc Code
+
+Understanding the boundary between ad-hoc scripts (OK for minute-men) and production code (delegate to dev team) is critical.
+
+### Ad-Hoc Scripts (Minute-Men Write These)
+
+**Characteristics:**
+- One-off analysis for a specific task
+- Throwaway code that won't be reused across tasks
+- Quick data transformations or checks
+- Lives in `data-team-output/` or gets discarded after use
+- No tests, minimal docs, no error handling
+
+**Examples:**
+- `python -c "import pandas; df = pd.read_parquet('data.pq'); print(df.describe())"`
+- One-off deduplication script for a single dataset
+- Quick CSV parser for immediate analysis
+- Temporary data transformation for a specific report
+
+**Action:** Minute-men can write and use these freely
+
+### Production Code (Dev Team Builds via PRD)
+
+**Characteristics:**
+- Reusable across multiple datasets/tasks
+- Needs error handling, documentation, tests
+- Part of a CLI tool, library, or infrastructure
+- Lives in the main codebase (not `data-team-output/`)
+- User explicitly asks to "consolidate", "build a tool", "make this reusable", "production-grade"
+
+**Examples:**
+- CLI tool with subcommands
+- Python package for data processing
+- Reusable library functions
+- Infrastructure code that multiple tasks depend on
+
+**Action:** Write PRD, send to Architect, NEVER implement yourself
+
+### Decision Heuristics
+
+| Scenario | Classification | Action |
+|----------|---------------|--------|
+| User says "analyze this dataset" | Ad-hoc | Spawn minute-men |
+| User says "build a tool to analyze datasets" | Production | Write PRD |
+| User says "consolidate these scripts into production code" | Production | Write PRD |
+| Minute-men flag same workaround 3+ times | Production | Write PRD |
+| User says "quick check for duplicates" | Ad-hoc | Spawn minute-men |
+| User says "create a reusable deduplication library" | Production | Write PRD |
+| One-time data transformation | Ad-hoc | Spawn minute-men |
+| Recurring data pipeline component | Production | Write PRD |
+
+### The 3-Strike Rule
+
+If minute-men report needing the same workaround, tool, or script 3 or more times across different tasks, that's a signal to write a PRD for a production tool. Don't keep writing throwaway solutions — escalate to the dev team.
+
+**When in doubt:** If the user uses words like "production", "tool", "reusable", "consolidate", "library" → write PRD. If it needs to survive beyond the current task → write PRD.
+
 ## What You Do NOT Do
 
 - Write production tooling (that's the dev team's job — file a PRD instead)

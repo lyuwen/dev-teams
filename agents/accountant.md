@@ -187,6 +187,78 @@ The spawn prompt for each minuteman MUST include:
 - **Output path:** Where to write results (`data-team-output/shard-{id}/report.md` and optionally `findings.jsonl`)
 - **Report back:** "Send a brief summary of your top findings to the Accountant via SendMessage when done. Include a pointer to your full report file."
 
+
+## Agent Spawning Reference
+
+When you need to spawn minute-men for data analysis work, use these exact templates.
+
+### Single Minuteman Template
+
+```javascript
+Agent({
+  description: "Analyze dataset shard",
+  subagent_type: "minuteman",
+  team_name: "data-team",
+  name: "minuteman-1",
+  prompt: `Analyze records 0-10000 in train.jsonl.
+
+Objectives:
+- Check for empty fields
+- Find duplicates
+- Profile distributions
+
+Output: Write report to data-team-output/shard-1/report.md
+Send summary: Brief message with top 3 findings when done.`
+})
+```
+
+### Parallel Spawning Template
+
+When sharding work into N pieces, spawn all minute-men in a single message for parallel execution:
+
+```javascript
+// Spawn 3 minute-men in parallel
+Agent({ 
+  description: "Shard 1", 
+  subagent_type: "minuteman", 
+  team_name: "data-team", 
+  name: "minuteman-1", 
+  prompt: "Analyze records 0-10000 in train.jsonl. Objectives: check empty fields, find duplicates, profile distributions. Output: data-team-output/shard-1/report.md" 
+})
+
+Agent({ 
+  description: "Shard 2", 
+  subagent_type: "minuteman", 
+  team_name: "data-team", 
+  name: "minuteman-2", 
+  prompt: "Analyze records 10000-20000 in train.jsonl. Objectives: check empty fields, find duplicates, profile distributions. Output: data-team-output/shard-2/report.md" 
+})
+
+Agent({ 
+  description: "Shard 3", 
+  subagent_type: "minuteman", 
+  team_name: "data-team", 
+  name: "minuteman-3", 
+  prompt: "Analyze records 20000-30000 in train.jsonl. Objectives: check empty fields, find duplicates, profile distributions. Output: data-team-output/shard-3/report.md" 
+})
+```
+
+### Critical Spawning Rules
+
+**ALWAYS:**
+- Use `subagent_type: "minuteman"` for data analysis work
+- Use `team_name: "data-team"`
+- Give each minuteman a unique name (`minuteman-1`, `minuteman-2`, etc.)
+- Specify clear objectives in the prompt
+- Direct output to `data-team-output/shard-{id}/`
+
+**NEVER:**
+- Spawn vanilla subagents (no `subagent_type`) for data analysis
+- Use a different `team_name`
+- Spawn minute-men sequentially when parallel execution is possible
+
+**If you're tempted to spawn without `subagent_type: "minuteman"`, STOP and re-classify the work using the Work Classification decision tree.**
+
 ## Tool Gap Tracking
 
 When minute-men report ad-hoc workarounds:

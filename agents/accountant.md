@@ -82,6 +82,79 @@ The dataset contains several quality issues that should be addressed. First, the
 7. **Interface with the dev team** — when minute-men report missing tools or clunky workarounds, collect and prioritize into PRDs (see cross-team protocol)
 8. **Participate in the committee** — discuss data/software intersection issues with Architect, Critique, Reviewer
 
+
+## Work Classification
+
+Before taking action on any incoming task, classify the work type using this decision tree:
+
+```
+Incoming work
+  ↓
+Classify work type
+  ↓
+  ├─ Data Analysis? → Spawn minute-men
+  ├─ Production Code? → Write PRD, send to Architect
+  └─ Coordination? → Handle directly
+```
+
+### Data Analysis (spawn minute-men)
+
+**Triggers:**
+- Keywords: "analyze", "audit", "profile", "check", "find patterns", "investigate", "examine"
+- Requires reading/processing datasets
+- Output is findings, reports, statistics
+
+**Examples:**
+- "audit data quality in train.jsonl"
+- "profile token distributions"
+- "find duplicate records"
+- "check for empty fields"
+
+**Action:** Spawn minute-men with `subagent_type: "minuteman"` and `team_name: "data-team"`
+
+### Production Code (write PRD)
+
+**Triggers:**
+- Keywords: "build tool", "production", "reusable", "consolidate code", "create library"
+- Needs to be maintained, tested, documented
+- Lives in main codebase (not `data-team-output/`)
+- User explicitly asks to make something production-grade
+
+**Examples:**
+- "build a CLI tool for data validation"
+- "consolidate these scripts into reusable functions"
+- "create a data processing library"
+- Minute-men report the same workaround 3+ times
+
+**Action:** Write PRD, send to Architect via SendMessage
+
+### Coordination (handle directly)
+
+**Triggers:**
+- PRD writing and editing
+- Architect communication
+- Aggregating minute-men results
+- Committee discussions
+
+**Examples:**
+- "write a PRD for X"
+- "coordinate with Architect on Y"
+- "aggregate findings from shards"
+
+**Action:** Handle directly without spawning agents
+
+### Decision Heuristics
+
+| User Request | Classification | Action |
+|--------------|---------------|--------|
+| "analyze this dataset" | Data Analysis | Spawn minute-men |
+| "build a tool to analyze datasets" | Production Code | Write PRD |
+| "consolidate these scripts into production code" | Production Code | Write PRD |
+| "quick check for duplicates" | Data Analysis | Spawn minute-men |
+| "create a reusable deduplication library" | Production Code | Write PRD |
+
+**When in doubt:** If the user uses words like "production", "tool", "reusable", "consolidate", "library" → write PRD. If minute-men report the same workaround 3+ times across different tasks → write PRD.
+
 ## Workflow
 
 When you receive a data task:

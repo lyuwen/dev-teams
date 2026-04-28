@@ -122,6 +122,12 @@ What type of work is this?
 # Create backup
 cp agents/accountant.md agents/accountant.md.backup
 
+# Verify the insertion point
+if ! grep -q "## Workflow" agents/accountant.md; then
+    echo "Error: Could not find '## Workflow' section"
+    exit 1
+fi
+
 # Insert after line 84 (after "Your Core Responsibilities")
 head -n 84 agents/accountant.md > agents/accountant.md.tmp
 cat >> agents/accountant.md.tmp << 'EOF'
@@ -322,6 +328,10 @@ Agent({
 ```bash
 # Find the line number of "## Tool Gap Tracking"
 TOOL_GAP_LINE=$(grep -n "## Tool Gap Tracking" agents/accountant.md | cut -d: -f1)
+if [ -z "$TOOL_GAP_LINE" ]; then
+    echo "Error: Could not find '## Tool Gap Tracking' section"
+    exit 1
+fi
 
 # Insert before that line
 head -n $((TOOL_GAP_LINE - 1)) agents/accountant.md > agents/accountant.md.tmp
@@ -653,9 +663,10 @@ Replace the current "What You Do NOT Do" section with an enhanced version:
 ```bash
 # Find the line number of "## What You Do NOT Do"
 WHAT_NOT_LINE=$(grep -n "## What You Do NOT Do" agents/accountant.md | cut -d: -f1)
-
-# Find the end of the file or next section
-TOTAL_LINES=$(wc -l < agents/accountant.md)
+if [ -z "$WHAT_NOT_LINE" ]; then
+    echo "Error: Could not find '## What You Do NOT Do' section"
+    exit 1
+fi
 
 # Replace from "## What You Do NOT Do" to end of file
 head -n $((WHAT_NOT_LINE - 1)) agents/accountant.md > agents/accountant.md.tmp
@@ -759,6 +770,10 @@ This section defines what work belongs to which team and enforces the boundary.
 ```bash
 # Find the line number of "## Product Requirement Document (PRD) Flow"
 PRD_LINE=$(grep -n "## Product Requirement Document (PRD) Flow" shared/cross-team-protocol.md | cut -d: -f1)
+if [ -z "$PRD_LINE" ]; then
+    echo "Error: Could not find '## Product Requirement Document (PRD) Flow' section"
+    exit 1
+fi
 
 # Insert before that line
 head -n $((PRD_LINE - 1)) shared/cross-team-protocol.md > shared/cross-team-protocol.md.tmp
@@ -886,13 +901,13 @@ EOF
 chmod +x tests/validate_accountant_delegation.sh
 ```
 
-- [ ] **Step 2: Add Check 1 - Spawn validation**
+- [ ] **Step 2: Add Check 1 - Static structure validation**
 
 ```bash
 cat >> tests/validate_accountant_delegation.sh << 'EOF'
 
 # Check 1: Verify accountant.md has required sections
-echo "Check 1: Accountant instructions completeness"
+echo "Check 1: Accountant instructions structure"
 echo "---"
 
 if grep -q "## Work Classification" agents/accountant.md; then
@@ -913,10 +928,16 @@ else
     fail "Production vs. Ad-Hoc Code section missing"
 fi
 
-if grep -q "subagent_type: \"minuteman\"" agents/accountant.md; then
+if grep -q 'subagent_type: "minuteman"' agents/accountant.md; then
     pass "Spawn template includes subagent_type"
 else
     fail "Spawn template missing subagent_type"
+fi
+
+if grep -q "NEVER write production code" agents/accountant.md; then
+    pass "Production code prohibition present"
+else
+    fail "Production code prohibition missing"
 fi
 
 echo ""
@@ -930,7 +951,7 @@ EOF
 cat >> tests/validate_accountant_delegation.sh << 'EOF'
 
 # Check 2: Verify cross-team protocol has delegation boundaries
-echo "Check 2: Cross-team protocol completeness"
+echo "Check 2: Cross-team protocol structure"
 echo "---"
 
 if grep -q "## Delegation Boundaries" shared/cross-team-protocol.md; then
@@ -962,37 +983,48 @@ echo ""
 EOF
 ```
 
-- [ ] **Step 4: Add Check 3 - Content validation**
+- [ ] **Step 4: Add Check 3 - Runtime behavior validation (git commits)**
 
 ```bash
 cat >> tests/validate_accountant_delegation.sh << 'EOF'
 
-# Check 3: Verify key enforcement rules are present
-echo "Check 3: Enforcement rules validation"
+# Check 3: Runtime validation - check for production code violations in git history
+echo "Check 3: Production code boundary (git history)"
 echo "---"
 
-if grep -q "NEVER write production code" agents/accountant.md; then
-    pass "Production code prohibition present"
+# Check if there are any commits in the repo
+if ! git rev-parse HEAD >/dev/null 2>&1; then
+    warn "No git history found - skipping runtime checks"
 else
-    fail "Production code prohibition missing"
-fi
-
-if grep -q "ALWAYS use.*subagent_type.*minuteman" agents/accountant.md; then
-    pass "Minuteman spawn requirement present"
-else
-    fail "Minuteman spawn requirement missing"
-fi
-
-if grep -q "write PRD" agents/accountant.md; then
-    pass "PRD delegation instruction present"
-else
-    fail "PRD delegation instruction missing"
-fi
-
-if grep -q "Decision.*tree\|Classification" agents/accountant.md; then
-    pass "Decision tree/classification present"
-else
-    fail "Decision tree/classification missing"
+    # Look for commits that might indicate Accountant wrote production code
+    # This is a heuristic check - looks for code files outside data-team-output/
+    
+    # Get list of files modified in recent commits (last 50 commits)
+    RECENT_FILES=$(git log -50 --name-only --pretty=format: | sort -u | grep -v '^$' || true)
+    
+    # Check for suspicious patterns
+    SUSPICIOUS_FILES=$(echo "$RECENT_FILES" | grep -E '\.(py|js|ts|go|rs|java)$' | grep -v 'data-team-output/' | grep -v 'tests/' | grep -v 'docs/' || true)
+    
+    if [ -z "$SUSPICIOUS_FILES" ]; then
+        pass "No production code files in main codebase (recent commits)"
+    else
+        # This is a warning, not a failure, because we can't definitively say Accountant wrote it
+        warn "Found code files in main codebase - manual review recommended:"
+        echo "$SUSPICIOUS_FILES" | head -n 5 | while read -r file; do
+            info "  - $file"
+        done
+    fi
+    
+    # Check for PRD files
+    PRD_FILES=$(echo "$RECENT_FILES" | grep 'docs/prd/' || true)
+    if [ -n "$PRD_FILES" ]; then
+        pass "PRD files found in docs/prd/ (delegation working)"
+        echo "$PRD_FILES" | head -n 3 | while read -r file; do
+            info "  - $file"
+        done
+    else
+        info "No PRD files found (may not have run data-team yet)"
+    fi
 fi
 
 echo ""
@@ -1000,7 +1032,53 @@ echo ""
 EOF
 ```
 
-- [ ] **Step 5: Add summary and exit code**
+- [ ] **Step 5: Add Check 4 - Session log validation (if available)**
+
+```bash
+cat >> tests/validate_accountant_delegation.sh << 'EOF'
+
+# Check 4: Session log validation - check for spawn correctness
+echo "Check 4: Spawn correctness (session logs)"
+echo "---"
+
+# Check if .claude/sessions/ directory exists
+if [ -d ".claude/sessions" ]; then
+    # Look for recent session files
+    RECENT_SESSIONS=$(find .claude/sessions -name "*.jsonl" -mtime -7 2>/dev/null | head -n 10 || true)
+    
+    if [ -z "$RECENT_SESSIONS" ]; then
+        info "No recent session logs found (last 7 days)"
+    else
+        # Check for Agent tool calls in session logs
+        AGENT_CALLS=$(echo "$RECENT_SESSIONS" | xargs grep -h '"name":"Agent"' 2>/dev/null || true)
+        
+        if [ -z "$AGENT_CALLS" ]; then
+            info "No Agent tool calls found in recent sessions"
+        else
+            # Check for minuteman spawns
+            MINUTEMAN_SPAWNS=$(echo "$AGENT_CALLS" | grep -c 'subagent_type.*minuteman' || true)
+            VANILLA_SPAWNS=$(echo "$AGENT_CALLS" | grep -v 'subagent_type' | wc -l || true)
+            
+            if [ "$MINUTEMAN_SPAWNS" -gt 0 ]; then
+                pass "Found $MINUTEMAN_SPAWNS minuteman spawns with correct subagent_type"
+            fi
+            
+            if [ "$VANILLA_SPAWNS" -gt 0 ]; then
+                warn "Found $VANILLA_SPAWNS vanilla Agent spawns (may be from other agents)"
+                info "Manual review recommended to verify these aren't from Accountant"
+            fi
+        fi
+    fi
+else
+    info "No .claude/sessions directory - skipping session log checks"
+fi
+
+echo ""
+
+EOF
+```
+
+- [ ] **Step 6: Add usage documentation and summary**
 
 ```bash
 cat >> tests/validate_accountant_delegation.sh << 'EOF'
@@ -1014,6 +1092,9 @@ echo ""
 
 if [ $VIOLATIONS -eq 0 ]; then
     echo -e "${GREEN}✓ All validation checks passed${NC}"
+    if [ $WARNINGS -gt 0 ]; then
+        echo -e "${YELLOW}⚠ $WARNINGS warning(s) - manual review recommended${NC}"
+    fi
     exit 0
 else
     echo -e "${RED}✗ $VIOLATIONS validation check(s) failed${NC}"
@@ -1022,19 +1103,41 @@ fi
 EOF
 ```
 
-- [ ] **Step 6: Test the validation script**
+- [ ] **Step 7: Add help documentation at the top of the script**
+
+```bash
+# Insert help text after shebang
+sed -i '2i\
+# Usage: ./tests/validate_accountant_delegation.sh\
+#\
+# Validates Accountant delegation behavior:\
+# - Static structure: Required sections in accountant.md and cross-team-protocol.md\
+# - Git history: Checks for production code violations\
+# - Session logs: Validates spawn correctness (if logs available)\
+#\
+# Exit codes:\
+#   0 - All checks passed\
+#   1 - One or more checks failed\
+' tests/validate_accountant_delegation.sh
+```
+
+- [ ] **Step 8: Test the validation script**
 
 ```bash
 ./tests/validate_accountant_delegation.sh
 ```
 
-Expected: All checks should pass after Tasks 1-5 are complete
+Expected: 
+- Check 1: All structure checks pass (after Tasks 1-5)
+- Check 2: All protocol checks pass (after Task 5)
+- Check 3: Warnings or info (depends on git history)
+- Check 4: Info (no session logs yet)
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add tests/validate_accountant_delegation.sh
-git commit -m "feat(tests): add accountant delegation validation script"
+git commit -m "feat(tests): add accountant delegation validation script with runtime checks"
 ```
 
 ---
@@ -1068,7 +1171,8 @@ fi
 - [ ] **Step 3: Create tests/README.md if it doesn't exist**
 
 ```bash
-cat > tests/README.md << 'EOF'
+if [ ! -f tests/README.md ]; then
+    cat > tests/README.md << 'EOF'
 # Dev Teams Validation Scripts
 
 This directory contains validation scripts for the dev-teams plugin.
@@ -1086,9 +1190,9 @@ Validates usability testing agents (Instructor and Noob).
 
 ### `validate_accountant_delegation.sh`
 Validates Accountant delegation behavior:
-- Spawn correctness (minute-men with correct subagent_type)
-- Production code boundary enforcement
-- PRD compliance
+- Static structure: Required sections in accountant.md and cross-team-protocol.md
+- Git history: Checks for production code violations
+- Session logs: Validates spawn correctness (if logs available)
 
 ## Running All Validations
 
@@ -1103,6 +1207,9 @@ Validates Accountant delegation behavior:
 
 These scripts can be integrated into CI pipelines for regression testing.
 EOF
+else
+    echo "tests/README.md already exists - manual update needed"
+fi
 ```
 
 - [ ] **Step 4: Commit**

@@ -42,6 +42,54 @@ Committee discussions happen via SendMessage between the members. Either lead ca
 - Dev-team workers do NOT communicate with data-team agents
 - All cross-team communication routes through the leads
 
+
+## Delegation Boundaries
+
+Clear boundaries prevent scope creep and ensure each team focuses on its strengths.
+
+### Data Team Scope
+
+The Accountant and minute-men handle:
+- Data analysis, profiling, quality auditing
+- Dataset investigation and characterization
+- Ad-hoc scripts for one-off tasks (lives in `data-team-output/`)
+- Identifying tool gaps and writing PRDs
+- Aggregating findings and reporting to user
+
+### Dev Team Scope
+
+The Architect and dev-team agents handle:
+- Production tools, libraries, CLI commands
+- Reusable infrastructure code
+- Anything that needs tests, documentation, and maintenance
+- Code that lives in the main codebase (not `data-team-output/`)
+
+### Boundary Enforcement Rules
+
+1. **The Accountant NEVER writes production code**, even if it seems simple or quick
+2. If the user asks the Accountant to "build a tool", "consolidate code", or "make it reusable" → Accountant writes PRD, does NOT implement
+3. If minute-men report the same workaround 3+ times → Accountant writes PRD for a proper tool
+4. Ad-hoc scripts in `data-team-output/` are OK; code in the main codebase is NOT
+5. When in doubt, write a PRD and consult the Architect
+
+### Violation Examples
+
+❌ **WRONG:** User asks "consolidate these data processing scripts into production code" → Accountant writes the code
+
+✅ **RIGHT:** User asks "consolidate these data processing scripts into production code" → Accountant writes PRD, sends to Architect
+
+---
+
+❌ **WRONG:** Accountant spawns vanilla subagent for data analysis
+
+✅ **RIGHT:** Accountant spawns minuteman with `subagent_type: "minuteman"`
+
+---
+
+❌ **WRONG:** Minute-men report needing a CSV parser 5 times → Accountant writes a one-off parser each time
+
+✅ **RIGHT:** Minute-men report needing a CSV parser 3+ times → Accountant writes PRD for a reusable CSV parsing tool
+
 ## Product Requirement Document (PRD) Flow
 
 When the data team needs a new tool or tool improvement:

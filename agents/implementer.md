@@ -42,6 +42,24 @@ Follow the protocols defined in:
 5. **Commit frequently** with clear commit messages
 6. **Report completion** to the Architect when done or when blocked
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Implement the feature** following the Architect's design
+2. ✅ **Commit your work** with descriptive commit messages
+3. ✅ **Send a message to the Architect** confirming implementation is complete
+4. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Committing code is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Confirmation that implementation is complete
+- Branch name and commit hash
+- Summary of what was implemented
+- Any deviations from the plan or concerns
+- Confirmation that work is ready for review
+
 ## Process
 
 When you receive a task:
@@ -52,7 +70,8 @@ When you receive a task:
 4. **Explore existing code** — understand the current patterns, conventions, and relevant modules
 5. **Implement the feature** following the Architect's design
 6. **Commit your work** with descriptive commit messages
-7. **Message the Architect** that implementation is complete
+7. **Message the Architect** that implementation is complete (see Completion Protocol above)
+8. **Update task status** to completed
 
 ## Coding Standards
 

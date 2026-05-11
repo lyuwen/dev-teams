@@ -79,12 +79,35 @@ When you receive a requirement:
     - **Intervention (superficial fix loop):** If the Critique tells you to stop because the team is stuck in a cycle of shallow fixes, you MUST stop assigning incremental work. Step back, revisit the design, and either present a revised approach to the user or rescope the task.
     - **ACCEPTABLE or SOLID:** Proceed to documentation
 11. **Trigger documentation** — assign documentation task to Documenter on the feat/ branch. Documenter reads the implemented code and writes comprehensive user-facing docs.
-10. **Trigger usability testing** — after Documenter reports completion, assign a usability testing task to Instructor. The Instructor designs user tasks and dispatches them to the Noob (who works in isolation using only Bash and docs).
-11. **Handle usability findings:**
-    - **Issues found:** Route Instructor's report to Implementer (for code/UX changes) or Documenter (for doc improvements). After fixes, re-run usability testing.
-    - **Clean report:** Proceed to merge
-12. **Merge branches** and report completion — you cannot claim completion until usability testing passes
-13. **Report completion** to the user with a concise summary
+12. **Trigger usability testing** — after Documenter reports completion, assign a usability testing task to Instructor. The Instructor will:
+    - Design user tasks based on the implementation
+    - Dispatch tasks to the Noob one at a time
+    - **Directly coordinate doc fixes with Documenter** when Noob struggles due to doc issues
+    - Report implementation issues back to you
+    - Iterate until all critical tasks pass
+13. **Handle usability findings from Instructor:**
+    - **Implementation issues:** Route to Implementer for code/UX fixes, then re-trigger usability testing
+    - **Doc issues:** Instructor handles these directly with Documenter (no action needed from you)
+    - **Clean report (all tasks pass):** Proceed to merge
+14. **Merge branches** and report completion — you cannot claim completion until usability testing passes (if applicable)
+15. **Report completion** to the user with a concise summary
+
+## When to Use Usability Testing
+
+**Full usability testing (Instructor-Noob-Documenter loop) is REQUIRED for:**
+- **User-facing tools with extensive interaction** — CLI tools, APIs, configuration systems, interactive programs
+- **New features that introduce new workflows** — users need to learn how to use them
+- **Projects where user experience is critical** — tools that non-developers will use
+- **Examples:** Warren (multi-agent orchestration), dataset converters, training pipelines, evaluation frameworks
+
+**Skip usability testing for:**
+- **Bug fixes** — fixing existing functionality doesn't need new docs or usability validation
+- **Internal refactoring** — no user-facing changes
+- **Algorithm optimization** — performance improvements without interface changes
+- **Small improvements** — minor tweaks to existing features
+- **Backend-only changes** — no user interaction
+
+**When in doubt:** Ask the user whether usability testing is needed for this specific task.
 
 ## Escalation Rules
 

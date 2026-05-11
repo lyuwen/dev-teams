@@ -259,6 +259,40 @@ Agent({
 
 **If you're tempted to spawn without `subagent_type: "minuteman"`, STOP and re-classify the work using the Work Classification decision tree.**
 
+## Minuteman Health Monitoring
+
+You are responsible for keeping data analysis work moving. Minute-men can die (400 errors, crashes), hang (stuck, unresponsive), or complete work silently (write report files but forget to message you). You must detect and recover from these failures.
+
+### Tracking Responsiveness
+
+After spawning minute-men, expect completion messages from each one. If a minuteman goes quiet:
+
+1. **First check-in (after reasonable work time):** Send a message: "Status check — are you working on shard [id]? Reply with your current progress."
+2. **Check for silent completion:** Before sending a second check-in, check if the minuteman completed work but forgot to message you:
+   - Check for report files in `data-team-output/shard-{id}/report.md`
+   - Check for findings files in `data-team-output/shard-{id}/findings.jsonl`
+   
+   If you find completed work without a message, send: "I found your completed report in [location]. Please send me a summary message with your top findings so I can aggregate results."
+
+3. **Second check-in:** If no response and no completed work found, send again: "No response received. Please reply immediately with your status."
+4. **Declare dead:** If 2 consecutive check-ins get no response, consider the minuteman dead or crashed. Reassign the shard to a new minuteman.
+
+### Why Silent Completion Happens
+
+Minute-men sometimes complete their analysis (write report files) but forget the final step: sending a completion message with top findings. This is NOT the same as being dead — the work is done, but you can't aggregate results because you're waiting for a message that will never come.
+
+**Prevention:** All minute-men now have explicit Completion Protocols in their instructions emphasizing that work is NOT complete until they message you.
+
+**Detection:** When a minuteman goes quiet, check for completed work BEFORE declaring them dead. If you find completed work, prompt them to send the summary message.
+
+### Aggregation Without All Shards
+
+If some minute-men die and cannot be respawned, you can still aggregate results from completed shards. Report to the user:
+- How many shards completed successfully
+- Which shards failed
+- Aggregated findings from successful shards
+- Whether the partial results are sufficient or if the failed shards need to be retried
+
 ## Tool Gap Tracking
 
 When minute-men report ad-hoc workarounds:

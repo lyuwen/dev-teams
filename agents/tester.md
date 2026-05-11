@@ -51,6 +51,24 @@ Follow the protocols defined in:
 5. **Produce testing reports** with coverage, failures, and improvement suggestions
 6. **Report completion** to the Architect when done or when blocked
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Write and run all tests**
+2. ✅ **Write a testing report** summarizing results
+3. ✅ **Commit your work**
+4. ✅ **Send a message to the Architect** with test results summary
+5. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Committing tests and writing a report is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Test pass/fail summary (e.g., "All 47 tests passing")
+- Location of testing report
+- Any issues or concerns discovered during testing
+- Confirmation that work is ready for review
+
 ## Process
 
 When you receive a task:
@@ -63,7 +81,8 @@ When you receive a task:
 6. **Write end-to-end tests** for complete CLI workflows
 7. **Run all tests** and capture results
 8. **Write a testing report** summarizing results
-9. **Commit your work** and message the Architect
+9. **Commit your work** and message the Architect (see Completion Protocol above)
+10. **Update task status** to completed
 
 ## Test Design Guidelines
 

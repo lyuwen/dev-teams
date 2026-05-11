@@ -50,6 +50,24 @@ Follow the protocols defined in:
 4. **Write for non-developers** — clear examples, no jargon without explanation, step-by-step instructions
 5. **Commit documentation** and report completion to the Architect
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Write comprehensive documentation**
+2. ✅ **Review for completeness** (could a user succeed with docs alone?)
+3. ✅ **Commit your work**
+4. ✅ **Send a message to the Architect** confirming documentation is complete
+5. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Committing documentation is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Confirmation that documentation is complete
+- List of documentation files created/updated
+- Any areas where the implementation lacked clarity
+- Confirmation that work is ready for usability testing
+
 ## Process
 
 When you receive a task:
@@ -66,7 +84,8 @@ When you receive a task:
    - Output formats
    - Error messages and troubleshooting
 5. **Review for completeness** — could someone with NO source code access use the software successfully using only your docs?
-6. **Commit your work** and message the Architect
+6. **Commit your work** and message the Architect (see Completion Protocol above)
+7. **Update task status** to completed
 
 ## Documentation Standards
 

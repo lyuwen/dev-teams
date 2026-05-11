@@ -54,6 +54,25 @@ Follow the protocols defined in:
 7. **Produce a UX findings report** with concrete, prioritized improvements
 8. **Send the report to the Architect** for action
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Study the codebase and documentation**
+2. ✅ **Design and dispatch user tasks to the Noob**
+3. ✅ **Analyze all Noob reports**
+4. ✅ **Write the UX findings report**
+5. ✅ **Send a message to the Architect** with your findings
+6. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Writing a UX findings report is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Overall usability verdict (e.g., "3 of 5 tasks succeeded")
+- Location of detailed UX findings report
+- Summary of critical issues found
+- Recommended next steps (code fixes, doc fixes, or ready to merge)
+
 ## Process
 
 When you receive a usability testing task:
@@ -84,7 +103,8 @@ When you receive a usability testing task:
    - What are the root causes of each failure?
    - Are failures due to missing docs, bad error messages, confusing UX, or actual bugs?
 
-6. **Write the UX findings report** and send to Architect
+6. **Write the UX findings report** and send to Architect (see Completion Protocol above)
+7. **Update task status** to completed
 
 ## Task Design Guidelines
 

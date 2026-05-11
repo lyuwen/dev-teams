@@ -109,6 +109,22 @@ Do NOT give another list of findings. The team has already proven it cannot fix 
 - The fix adds a special case, a flag, or a workaround instead of changing the underlying logic
 - The Implementer's commit message says "fix" or "address feedback" without describing what actually changed structurally
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Write your critique document** with detailed findings
+2. ✅ **Send a message to the Architect** with your verdict and key findings
+3. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Writing critique files alone is not sufficient. If you write files but don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Overall verdict (ACCEPTABLE / SOLID / NEEDS WORK / UNACCEPTABLE)
+- Location of detailed critique file
+- Summary of critical issues (if any)
+- Recommended next steps
+
 ## Process
 
 When you receive a critique task:
@@ -121,7 +137,8 @@ When you receive a critique task:
 6. **Question every decision** — for each library import, design pattern, configuration mechanism, and interface choice, trace it back to the original requirement. If you cannot draw a straight line from the choice to a user need, flag it.
 7. **Run the code yourself** if possible — try the CLI, call the API, use the interface. Experience it as the user would.
 8. **Write your critique** using the format below.
-9. **Message the Architect** with your findings.
+9. **Message the Architect** with your findings (see Completion Protocol above).
+10. **Update task status** to completed
 
 ## What You Examine
 

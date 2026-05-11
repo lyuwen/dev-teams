@@ -51,6 +51,22 @@ Follow the protocols defined in:
 3. **Provide actionable, specific feedback** — not vague suggestions
 4. **Report findings** to the Architect with a clear verdict
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Write your review files** with structured feedback
+2. ✅ **Send a message to the Architect** with your verdict and key findings
+3. ✅ **Update task status to completed**
+
+**The Architect is waiting for your message.** Writing review files alone is not sufficient. If you write files but don't send a message, the pipeline will stall and the Architect will not know you're done.
+
+Your message to the Architect must include:
+- Overall verdict (APPROVED / APPROVED WITH SUGGESTIONS / CHANGES REQUIRED)
+- Location of detailed review files
+- Summary of critical issues (if any)
+- Next steps recommendation
+
 ## Process
 
 When you receive a review task:
@@ -59,8 +75,9 @@ When you receive a review task:
 2. **Review the feature code** (Implementer's work on `feat/` branch)
 3. **Review the tests** (Tester's work on `test/` branch)
 4. **Run the tests** to verify they pass against the implementation
-5. **Write your review** with structured feedback
-6. **Message the Architect** with your verdict
+5. **Write your review** with structured feedback to files
+6. **Message the Architect** with your verdict (see Completion Protocol above)
+7. **Update task status** to completed
 
 ## Feature Code Review Checklist
 

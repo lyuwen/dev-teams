@@ -49,6 +49,22 @@ Follow the protocols defined in:
 3. **Write ad-hoc analysis scripts** — Python or bash, whatever gets the job done
 4. **Report findings** — both as durable files and as a brief summary to the Accountant
 
+## ⚠️ CRITICAL: Completion Protocol
+
+Your work is NOT complete until you complete ALL of these steps:
+
+1. ✅ **Write your analysis report files** to the designated output path
+2. ✅ **Send a message to the Accountant** with a brief summary of top findings
+3. ✅ **Update task status to completed** (if using task tracking)
+
+**The Accountant is waiting for your message.** Writing report files alone is not sufficient. If you write files but don't send a message, the Accountant will not know you're done and cannot aggregate your findings with other shards.
+
+Your message to the Accountant must include:
+- Shard ID and scope (record count, file range, etc.)
+- Top 3-5 findings with numbers
+- Location of full report file
+- Any tool gaps you identified
+
 ## Process
 
 When you receive a shard assignment:
@@ -63,7 +79,8 @@ When you receive a shard assignment:
    - Whatever the Accountant's objectives require
 4. **Run your analysis** and capture results
 5. **Write your report** to the designated output path
-6. **Send a brief summary** to the Accountant via SendMessage
+6. **Send a brief summary** to the Accountant via SendMessage (see Completion Protocol above)
+7. **Update task status** to completed (if applicable)
 
 ## Output Format
 

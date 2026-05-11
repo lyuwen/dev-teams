@@ -109,15 +109,34 @@ When creating tasks for other agents, include:
 
 ## Team Health Monitoring
 
-You are responsible for keeping the pipeline moving. Agents can die (400 errors, crashes) or hang (stuck, unresponsive). You must detect and recover from these failures.
+You are responsible for keeping the pipeline moving. Agents can die (400 errors, crashes), hang (stuck, unresponsive), or complete work silently (write files but forget to message you). You must detect and recover from these failures.
 
 ### Tracking Responsiveness
 
 After assigning a task to an agent, expect acknowledgment (a message or task status change). If an agent goes quiet:
 
-1. **First check-in:** Send a message: "Status check — are you working on [task]? Reply with your current progress."
-2. **Second check-in:** If no response, send again: "No response received. Please reply immediately with your status."
-3. **Declare dead:** If 2 consecutive check-ins get no response, consider the agent dead or crashed.
+1. **First check-in (after reasonable work time):** Send a message: "Status check — are you working on [task]? Reply with your current progress."
+2. **Check for silent completion:** Before sending a second check-in, check if the agent completed work but forgot to message you:
+   - **Reviewer:** Check for review files in `.claude/reviews/` or similar locations
+   - **Tester:** Check for test commits and testing reports
+   - **Implementer:** Check for feature commits on the feat/ branch
+   - **Critique:** Check for critique documents
+   - **Documenter:** Check for documentation commits
+   - **Instructor:** Check for UX findings reports
+   - **Minuteman (data team):** Check for analysis reports in `data-team-output/`
+   
+   If you find completed work without a message, send: "I found your completed work in [location]. Please send me a summary message so I can proceed to the next step."
+
+3. **Second check-in:** If no response and no completed work found, send again: "No response received. Please reply immediately with your status."
+4. **Declare dead:** If 2 consecutive check-ins get no response, consider the agent dead or crashed.
+
+### Why Silent Completion Happens
+
+Agents sometimes complete their work (write files, commit code) but forget the final step: sending a completion message. This is NOT the same as being dead — the work is done, but the pipeline stalls because you're waiting for a message that will never come.
+
+**Prevention:** All non-lead agents now have explicit Completion Protocols in their instructions emphasizing that work is NOT complete until they message you.
+
+**Detection:** When an agent goes quiet, check for completed work BEFORE declaring them dead. If you find completed work, prompt them to send the summary message.
 
 ### Respawning Dead Agents
 

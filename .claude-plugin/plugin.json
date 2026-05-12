@@ -1,5 +1,9 @@
 {
   "name": "dev-teams",
   "version": "2.0.0",
-  "description": "Multi-team AI organization: dev-team (Architect + 7 agents) + data-team (Accountant + minute-men swarm). Shared coordination infrastructure."
+  "description": "Multi-team AI organization: dev-team (Architect + 7 agents) + data-team (Accountant + minute-men swarm). Shared coordination infrastructure.",
+  "author": {
+    "name": "Lyuwen Fu",
+    "email": "lyuwenfu@example.com"
+  }
 }

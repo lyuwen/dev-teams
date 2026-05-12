@@ -1,0 +1,40 @@
+{
+  "name": "dev-teams-marketplace",
+  "owner": {
+    "name": "Lyuwen Fu",
+    "email": "lyuwenfu@example.com"
+  },
+  "plugins": [
+    {
+      "name": "dev-teams",
+      "source": ".",
+      "description": "Multi-team AI organization: dev-team (Architect + 7 agents) + data-team (Accountant + minute-men swarm). Shared coordination infrastructure.",
+      "version": "2.0.0",
+      "author": {
+        "name": "Lyuwen Fu",
+        "email": "lyuwenfu@example.com"
+      },
+      "homepage": "https://github.com/lyuwenfu/dev-teams",
+      "repository": "https://github.com/lyuwenfu/dev-teams",
+      "license": "MIT",
+      "category": "development",
+      "tags": [
+        "teams",
+        "agents",
+        "development",
+        "data-processing",
+        "swarm",
+        "coordination",
+        "workflow"
+      ],
+      "keywords": [
+        "multi-team",
+        "agent-swarm",
+        "development-workflow",
+        "data-pipeline",
+        "coordination",
+        "persistent-memory"
+      ]
+    }
+  ]
+}

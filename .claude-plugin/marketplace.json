@@ -1,0 +1,35 @@
+{
+  "name": "dev-teams",
+  "version": "2.0.0",
+  "displayName": "Dev Teams",
+  "description": "Multi-team AI organization with specialized agents for development and data workflows",
+  "longDescription": "A comprehensive multi-team plugin featuring two specialized teams:\n\n**Dev Team**: Architect-led team with 7 specialized agents (Instructor, Noob, Documenter, Tester, Reviewer, Deployer, Maintainer) for full-cycle software development.\n\n**Data Team**: Accountant-led swarm with minute-men workers for parallel data processing, training pipelines, and evaluation tasks.\n\nIncludes shared coordination infrastructure, cross-team protocols, and persistent memory systems.",
+  "author": "Lyuwen Fu",
+  "repository": "https://github.com/lyuwenfu/dev-teams",
+  "license": "MIT",
+  "tags": [
+    "teams",
+    "agents",
+    "development",
+    "data-processing",
+    "swarm",
+    "coordination",
+    "workflow"
+  ],
+  "categories": [
+    "Development",
+    "Productivity",
+    "Automation"
+  ],
+  "minClaudeVersion": "1.0.0",
+  "homepage": "https://github.com/lyuwenfu/dev-teams",
+  "bugs": "https://github.com/lyuwenfu/dev-teams/issues",
+  "keywords": [
+    "multi-team",
+    "agent-swarm",
+    "development-workflow",
+    "data-pipeline",
+    "coordination",
+    "persistent-memory"
+  ]
+}

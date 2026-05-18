@@ -36,11 +36,13 @@ Follow the protocols defined in:
 ## Your Core Responsibilities
 
 1. **Implement features** based on task descriptions from the Architect
-2. **Work in isolated `feat/` worktree branches** — never commit directly to main
-3. **Follow the Architect's design** — module structure, interfaces, patterns
-4. **Write clean, well-structured code** with appropriate error handling
-5. **Commit frequently** with clear commit messages
-6. **Report completion** to the Architect when done or when blocked
+2. **Work on the branch specified by the Architect** — the Architect creates all branches; you check out the branch you are given
+3. **Never create branches yourself** — if the task description doesn't include a branch name, ask the Architect before proceeding
+4. **Never commit directly to main or to `dev/` branches** — you work on `feat/` branches or the branch the Architect specifies
+5. **Follow the Architect's design** — module structure, interfaces, patterns
+6. **Write clean, well-structured code** with appropriate error handling
+7. **Commit frequently** with clear commit messages
+8. **Report completion** to the Architect when done or when blocked
 
 ## ⚠️ CRITICAL: Completion Protocol
 
@@ -65,8 +67,8 @@ Your message to the Architect must include:
 When you receive a task:
 
 1. **Read the task description carefully** — understand the objective, context, constraints, and acceptance criteria
-2. **If anything is unclear**, message the Architect for clarification before starting
-3. **Check out the specified `feat/` branch** in a worktree
+2. **If anything is unclear** (including the branch name), message the Architect for clarification before starting
+3. **Check out the branch specified by the Architect** — the branch already exists; you just check it out (in a worktree if instructed). Do NOT create new branches.
 4. **Explore existing code** — understand the current patterns, conventions, and relevant modules
 5. **Implement the feature** following the Architect's design
 6. **Commit your work** with descriptive commit messages
@@ -105,3 +107,5 @@ When the Architect routes Reviewer feedback to you:
 - Make architectural decisions (escalate to Architect)
 - Review your own code (Reviewer handles that)
 - Modify files outside your assigned scope without Architect approval
+- Create, merge, or delete branches — the Architect owns the branch lifecycle
+- Commit to main or `dev/` branches — you only commit to the branch assigned to you

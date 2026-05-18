@@ -14,12 +14,12 @@ The user's requirement is the argument passed to this skill. If no argument was 
 
 | Agent | Role | Tools |
 |-------|------|-------|
-| **Architect** (team lead) | Designs architecture, decomposes tasks, coordinates agents, escalates design decisions to user | All |
-| **Implementer** | Writes feature code on `feat/` worktree branches | All |
-| **Tester** | Writes & runs tests on `test/` worktree branches, produces test reports | All |
+| **Architect** (team lead) | Designs architecture, decomposes tasks, owns all branches (creates `dev/<feature>` delivery branch, worker branches, merges), coordinates agents, escalates design decisions to user | All |
+| **Implementer** | Writes feature code on branches assigned by the Architect (never creates branches) | All |
+| **Tester** | Writes & runs tests on branches assigned by the Architect (never creates branches), produces test reports | All |
 | **Reviewer** | Reviews code & tests, provides structured feedback with severity levels | Read, Grep, Glob, Bash |
 | **Critique** | Final gate — plan adherence, first-principles challenge, UX scrutiny | Read, Grep, Glob, Bash |
-| **Documenter** | Writes/maintains user-facing documentation after implementation; docs must be self-sufficient for users with no source code | All |
+| **Documenter** | Writes/maintains user-facing documentation on the delivery branch after code is merged; docs must be self-sufficient for users with no source code | All |
 | **Instructor** | Designs realistic user tasks, dispatches to Noob, diagnoses usability failures, produces UX report | Read, Grep, Glob, Bash |
 | **Noob** | Simulates naive first-time user — tests software using ONLY docs, help text, and error messages (no source code) | Bash |
 
@@ -73,8 +73,10 @@ Spawn the Architect as a teammate using the Agent tool with the derived `team_na
 Include in the prompt:
 - The user's full requirement (verbatim)
 - That seven teammates are available: `implementer`, `tester`, `reviewer`, `critique`, `documenter`, `instructor`, `noob`
-- The workflow: Implementer and Tester work in parallel on separate worktree branches (`feat/` and `test/`), then Reviewer reviews both, then Critique does a final deep-dive, then Documenter writes docs, then Instructor+Noob run usability testing
-- That high-level design decisions must be escalated to the user — present the technical approach before assigning work
+- The workflow: the Architect creates a `dev/<feature>` delivery branch from main, then creates worker branches (`feat/`, `test/`) from it for Implementer and Tester to work on in parallel. After Reviewer and Critique approve, the Architect merges worker branches into `dev/<feature>`. Documenter then writes docs on `dev/<feature>`, followed by Instructor+Noob usability testing.
+- That the Architect owns the entire branch lifecycle — it creates, merges, and cleans up all branches. Sub-agents never create branches; they work on branches assigned to them.
+- That the final deliverable is a single `dev/<feature>` branch aggregating all code, tests, and docs, ready to PR into main
+- That high-level design decisions must be escalated to the user — present the technical approach (including branching strategy) before assigning work
 - That BOTH the Reviewer and Critique must pass before proceeding to usability testing — Reviewer approval alone is not sufficient
 - The derived `team_name` so the Architect can read the team config
 - That the Architect should read `.claude/team-memory/MEMORY.md` before analyzing the requirement
@@ -112,7 +114,7 @@ Spawn all seven in parallel using the Agent tool, each with the derived `team_na
 - Tell it the Architect assigns documentation tasks after implementation passes review
 - It should read `.claude/team-memory/MEMORY.md` at the start of each task
 - It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
-- It writes user-facing docs on the feat/ branch
+- It writes user-facing docs on the `dev/<feature>` delivery branch (the Architect will tell it which branch)
 
 **Instructor** — `name: "instructor"`, subagent_type `instructor`
 - Tell it the Architect assigns usability testing tasks after Documenter finishes
@@ -153,21 +155,24 @@ Tell the user:
 
 ```
 User requirement
-  → Architect (decomposes, designs, presents approach for user approval)
-    → parallel: Implementer (feat/ branch) + Tester (test/ branch)
-      → Reviewer (reviews code + tests, structured feedback)
-        → Critique (plan adherence, first-principles challenge, UX scrutiny)
-          → Documenter (writes/updates user-facing documentation)
-            → Instructor + Noob (usability testing — Instructor dispatches tasks, Noob attempts them)
-              → Architect (merges if usability passes, or routes findings for fixes)
+  → Architect (decomposes, designs, presents approach + branching strategy for user approval)
+    → Architect creates dev/<feature> delivery branch + worker branches
+      → parallel: Implementer (feat/ branch) + Tester (test/ branch)
+        → Reviewer (reviews code + tests, structured feedback)
+          → Critique (plan adherence, first-principles challenge, UX scrutiny)
+            → Architect merges worker branches into dev/<feature>
+              → Documenter (writes/updates docs on dev/<feature>)
+                → Instructor + Noob (usability testing)
+                  → Architect (finalizes dev/<feature>, cleans up worker branches, reports PR-ready branch)
 ```
 
 ## Key Rules
 
 - The Architect presents its technical approach to the user BEFORE assigning work — the user approves first
+- The Architect owns the entire branch lifecycle — creates `dev/<feature>` delivery branch, creates worker branches, merges them, and cleans them up. Sub-agents never create or merge branches.
+- The final deliverable is always a single `dev/<feature>` branch ready to PR into main
 - High-level design choices (library selection, API design, data formats) are escalated to the user
 - The Reviewer provides structured feedback with severity levels: blockers (must fix) vs. suggestions (nice to have)
 - If Reviewer requests changes, Architect routes feedback to the right agent, waits for fixes, then triggers re-review
-- After Reviewer and Critique both approve, the Architect triggers the usability testing phase: Documenter writes docs, then Instructor+Noob test usability
-- The Architect cannot claim final completion until usability testing passes
-- After usability testing passes, Architect merges branches and reports completion
+- After Reviewer and Critique both approve, the Architect merges worker branches into `dev/<feature>` and triggers the usability testing phase
+- The Architect cannot claim final completion until usability testing passes and the delivery branch is verified

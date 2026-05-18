@@ -18,11 +18,11 @@ Launch it with: `/dev-team <your requirement>`
 
 ### Build Phase
 
-- **Architect** (cyan, All tools) — Team lead. Receives the user's requirement, designs the approach, presents it for user approval, then decomposes it into tasks and coordinates all other agents. Escalates high-level decisions to the user.
+- **Architect** (cyan, All tools) — Team lead. Receives the user's requirement, designs the approach, presents it for user approval, then decomposes it into tasks and coordinates all other agents. **Owns the entire branch lifecycle**: creates a `dev/<feature>` delivery branch, creates worker branches (`feat/`, `test/`) for agents, merges them after approval, and delivers a single PR-ready branch. Escalates high-level decisions to the user.
 
-- **Implementer** (green, All tools) — Writes feature code on `feat/` worktree branches. Follows the Architect's design strictly. Does not write tests or make design decisions.
+- **Implementer** (green, All tools) — Writes feature code on branches assigned by the Architect. Never creates branches itself. Follows the Architect's design strictly. Does not write tests or make design decisions.
 
-- **Tester** (yellow, All tools) — Writes and runs tests on `test/` worktree branches, working in parallel with the Implementer. Produces testing reports covering unit tests, e2e tests, edge cases, and coverage.
+- **Tester** (yellow, All tools) — Writes and runs tests on branches assigned by the Architect. Never creates branches itself. Works in parallel with the Implementer. Produces testing reports covering unit tests, e2e tests, edge cases, and coverage.
 
 ### Review Phase
 
@@ -42,16 +42,28 @@ Launch it with: `/dev-team <your requirement>`
 
 ```
 User requirement
-  -> Architect (design + user approval)
-    -> Implementer (feat/ branch) + Tester (test/ branch)  [parallel]
-      -> Reviewer (code quality, correctness, test coverage)
-        -> Critique (plan adherence, first principles, UX)
-          -> Documenter (user-facing documentation)
-            -> Instructor + Noob (usability testing)
-              -> Architect (merge if passes, or route fixes back)
+  -> Architect (design + branching strategy + user approval)
+    -> Architect creates dev/<feature> delivery branch + worker branches
+      -> Implementer (feat/ branch) + Tester (test/ branch)  [parallel]
+        -> Reviewer (code quality, correctness, test coverage)
+          -> Critique (plan adherence, first principles, UX)
+            -> Architect merges worker branches into dev/<feature>
+              -> Documenter (user-facing documentation on dev/<feature>)
+                -> Instructor + Noob (usability testing)
+                  -> Architect (finalizes dev/<feature>, cleans up worker branches)
 ```
 
-Each stage must pass before the next begins. If any stage finds issues, fixes are routed back and the relevant stages re-run. The Architect cannot claim completion until the full pipeline passes.
+Each stage must pass before the next begins. If any stage finds issues, fixes are routed back and the relevant stages re-run. The Architect cannot claim completion until the full pipeline passes and `dev/<feature>` is ready to PR into main.
+
+## Branch Management
+
+The Architect is the **sole owner** of all branches. No other agent creates, merges, or deletes branches.
+
+- **`dev/<feature>`** — The delivery branch. Created by the Architect from main. This is where all work is aggregated and is the final PR target.
+- **`feat/<feature>`** — Worker branch for the Implementer. Created by the Architect from `dev/<feature>`.
+- **`test/<feature>`** — Worker branch for the Tester. Created by the Architect from `dev/<feature>`.
+
+After Reviewer + Critique approve, the Architect merges `feat/` and `test/` into `dev/<feature>`, runs tests on the merged branch, then proceeds to documentation and usability testing. At the end, worker branches are cleaned up and only `dev/<feature>` remains as the deliverable.
 
 ## Shared Memory System
 
@@ -67,8 +79,10 @@ This means the team remembers your design philosophy, coding preferences, and pa
 
 ## Key Rules
 
-1. **User approves before work begins** — the Architect presents the approach and waits for sign-off
-2. **Both Reviewer and Critique must pass** — Reviewer checks correctness, Critique challenges from first principles
-3. **Usability testing is mandatory** — the Noob must be able to use the software from docs alone before the team ships
-4. **No premature completion** — the Critique watches for superficial fix loops and forces redesign when needed
-5. **Decisions are escalated** — library choices, API design, scope changes, and UX concerns go to the user
+1. **User approves before work begins** — the Architect presents the approach (including branching strategy) and waits for sign-off
+2. **Architect owns all branches** — creates `dev/<feature>` delivery branch, worker branches, merges, and cleanup. Sub-agents never create branches.
+3. **Single deliverable** — the final output is always one `dev/<feature>` branch ready to PR into main
+4. **Both Reviewer and Critique must pass** — Reviewer checks correctness, Critique challenges from first principles
+5. **Usability testing is mandatory** — the Noob must be able to use the software from docs alone before the team ships
+6. **No premature completion** — the Critique watches for superficial fix loops and forces redesign when needed
+7. **Decisions are escalated** — library choices, API design, scope changes, and UX concerns go to the user

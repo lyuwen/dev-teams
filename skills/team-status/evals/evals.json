@@ -1,0 +1,166 @@
+{
+  "skill_name": "team-status",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Hey, can you give me a status check on the dev team? I launched them like 20 minutes ago to build that CLI tool and haven't heard anything. Are they stuck or just working?",
+      "expected_output": "Dev-team status report showing: current pipeline stage, each of the 8 agents' status (active/idle/stuck), task progress, and identification of any stuck agents based on 5-minute inactivity threshold. Should ask Architect for their perspective first, then append analysis. Should offer to nudge/respawn if stuck agents detected.",
+      "files": [],
+      "scenario": "dev-team-active-with-potential-stuck-agents",
+      "assertions": [
+        {
+          "name": "includes_dev_team_header",
+          "description": "Report includes 'Dev-Team Status' or 'Dev Team' header"
+        },
+        {
+          "name": "lists_all_8_agents",
+          "description": "Lists all 8 dev-team agents: architect, implementer, tester, reviewer, critique, documenter, instructor, noob"
+        },
+        {
+          "name": "identifies_tester_as_stuck",
+          "description": "Explicitly identifies Tester as stuck (contains 'Tester' and 'stuck' or 'STUCK')"
+        },
+        {
+          "name": "shows_task_progress",
+          "description": "Shows task completion stats (e.g., '2 of 8 tasks completed')"
+        },
+        {
+          "name": "includes_stuck_warning",
+          "description": "Includes warning about stuck agent (⚠️ or 'Stuck agent' or similar)"
+        },
+        {
+          "name": "offers_next_actions",
+          "description": "Offers next actions like nudge/respawn/check options"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "status report",
+      "expected_output": "Data-team status report showing: Accountant status, minute-men aggregate stats (total/active/completed/stuck), task progress. Should ask Accountant for their perspective first. Brief format with option to elaborate.",
+      "files": [],
+      "scenario": "data-team-active-brief-request",
+      "assertions": [
+        {
+          "name": "includes_data_team_header",
+          "description": "Report includes 'Data-Team Status' or 'Data Team' header"
+        },
+        {
+          "name": "shows_accountant_status",
+          "description": "Shows Accountant status (active/idle)"
+        },
+        {
+          "name": "shows_minutemen_aggregate_stats",
+          "description": "Shows minute-men aggregate stats: total spawned, active, completed"
+        },
+        {
+          "name": "shows_task_progress",
+          "description": "Shows task completion stats"
+        },
+        {
+          "name": "brief_format",
+          "description": "Report is concise (under 400 words)"
+        },
+        {
+          "name": "no_stuck_agents_flagged",
+          "description": "Does not flag any agents as stuck (all activity is recent)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I just started the data team like 30 seconds ago, what's happening?",
+      "expected_output": "Data-team status report but WITHOUT stuck detection (team < 2 minutes old). Should show which agents are active/spawning but not flag anything as stuck. Brief report from Accountant.",
+      "files": [],
+      "scenario": "data-team-just-launched",
+      "assertions": [
+        {
+          "name": "includes_data_team_header",
+          "description": "Report includes 'Data-Team Status' or 'Data Team' header"
+        },
+        {
+          "name": "mentions_team_is_new",
+          "description": "Acknowledges team just launched (mentions '30 seconds' or 'just started' or similar)"
+        },
+        {
+          "name": "no_stuck_detection",
+          "description": "Does NOT flag any agents as stuck (team too new, < 2 minutes)"
+        },
+        {
+          "name": "shows_agents_active_or_spawning",
+          "description": "Shows agents are active or spawning"
+        },
+        {
+          "name": "no_stuck_warnings",
+          "description": "Does not include stuck agent warnings (⚠️ or 'stuck' mentions)"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The accountant spawned a dev team to build some tools. How's everything going? Any progress on either team?",
+      "expected_output": "Nested team status report. Should ask Accountant for status, Accountant delegates dev-team portion to Architect. Report should show: Accountant status, minute-men stats, dev-team summary (8 agents, any stuck), task progress. Hierarchical format showing both teams.",
+      "files": [],
+      "scenario": "nested-data-team-plus-dev-team",
+      "assertions": [
+        {
+          "name": "hierarchical_structure",
+          "description": "Shows hierarchical structure with both data-team and dev-team sections"
+        },
+        {
+          "name": "accountant_at_top_level",
+          "description": "Accountant shown as top-level coordinator"
+        },
+        {
+          "name": "includes_minutemen_stats",
+          "description": "Includes minute-men aggregate stats"
+        },
+        {
+          "name": "includes_dev_team_summary",
+          "description": "Includes dev-team summary mentioning 8 agents or dev-team status"
+        },
+        {
+          "name": "shows_combined_task_progress",
+          "description": "Shows task progress for both teams or overall progress"
+        },
+        {
+          "name": "delegation_to_architect",
+          "description": "Indicates Accountant delegated dev-team status to Architect (mentions both leaders)"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "what's the team doing right now",
+      "expected_output": "Should detect team type automatically and provide appropriate status report. Format depends on which team is active (dev/data/nested/vanilla). Should work even with casual phrasing.",
+      "files": [],
+      "scenario": "casual-status-check-auto-detect",
+      "assertions": [
+        {
+          "name": "detects_vanilla_team",
+          "description": "Correctly identifies this as a vanilla team (not dev-team or data-team specific format)"
+        },
+        {
+          "name": "lists_all_agents",
+          "description": "Lists all active agents (researcher-1, researcher-2, writer)"
+        },
+        {
+          "name": "shows_agent_statuses",
+          "description": "Shows each agent's status (active/idle)"
+        },
+        {
+          "name": "shows_task_progress",
+          "description": "Shows task completion stats"
+        },
+        {
+          "name": "works_with_casual_phrasing",
+          "description": "Successfully responds to casual prompt 'what's the team doing right now'"
+        },
+        {
+          "name": "simple_list_format",
+          "description": "Uses simple list format appropriate for vanilla teams"
+        }
+      ]
+    }
+  ]
+}

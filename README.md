@@ -1,9 +1,10 @@
 # dev-teams
 
-A Claude Code plugin that provides two specialized multi-agent teams:
+A Claude Code plugin that provides two specialized multi-agent teams and monitoring tools:
 
 - **dev-team**: An 8-agent development team that designs, implements, tests, reviews, critiques, documents, and usability-tests software — with user approval at every major decision point.
 - **data-team**: A dynamic data analysis team with an Accountant lead who spawns minute-men workers for parallel data analysis, quality auditing, and dataset investigation.
+- **team-status**: Monitor long-running agent teams, identify stuck agents, and track progress across dev-team, data-team, nested teams, and vanilla agent teams.
 
 ---
 
@@ -76,6 +77,61 @@ This means agents remember your design philosophy, coding preferences, and past 
 - **Usability before completion**: Passing tests is the floor, not the ceiling. The Noob must be able to use the software from documentation alone before the team can ship.
 - **No premature completion**: The Critique watches for superficial fix loops and forces the team to step back and redesign when incremental patches aren't working.
 - **Memory-driven consistency**: User preferences persist across tasks via the shared memory system. You shouldn't have to explain the same thing twice.
+
+---
+
+## Team Status Monitoring
+
+Check the status of long-running agent teams and identify stuck agents.
+
+### Usage
+
+```
+/team-status
+```
+
+Or use natural language:
+```
+status check
+status report
+what's the team doing right now
+how's the team doing
+```
+
+### What It Does
+
+- **Auto-detects team type**: dev-team, data-team, nested teams (data-team + dev-team), or vanilla agent teams
+- **Passive monitoring**: Checks message timestamps and task updates without disrupting agents
+- **Smart stuck detection**: Flags agents with no activity for 5+ minutes (skips detection for teams < 2 minutes old)
+- **Team-specific reports**:
+  - **Dev-team**: Pipeline stage + all 8 agent statuses (active/idle/stuck)
+  - **Data-team**: Accountant status + minute-men aggregate stats
+  - **Nested teams**: Hierarchical report with Accountant delegating dev-team status to Architect
+  - **Vanilla teams**: Simple list of all agents with their statuses
+- **Actionable next steps**: Offers to nudge stuck agents, respawn unresponsive agents, or get more details
+
+### Example Output
+
+For a dev-team with a stuck agent:
+```
+## Dev-Team Status
+
+Architect's Report: We're in the implementation phase...
+
+Agent Status:
+- Architect: active - Coordinate implementation
+- Implementer: active - Write conversion logic
+- Tester: STUCK - Write unit tests (no updates for 8 min)
+- Reviewer: idle
+...
+
+⚠️ Stuck Agent Detected: Tester
+
+Would you like me to:
+1. Nudge stuck agents
+2. Respawn unresponsive agents
+3. Get more details
+```
 
 ---
 
@@ -200,6 +256,10 @@ dev-teams/
       SKILL.md                     # Dev team explainer
     data-team/
       SKILL.md                     # Data team launcher
+    team-status/
+      SKILL.md                     # Team status monitor
+      evals/
+        evals.json                 # Test cases and assertions
   tests/
     validate_usability_agents.sh
 ```

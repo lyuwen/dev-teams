@@ -151,6 +151,20 @@ Tell the user:
 - They'll be consulted on high-level design decisions before implementation begins
 - They can message any agent by name if needed
 
+### Step 8: Become the relay
+
+After the team is running, your ongoing role is **relay** — you sit between the user and the Architect, and between teammates and the Architect. You do not interpret or act on team activity yourself; the Architect makes all decisions.
+
+**Teammate idle notifications:** When any teammate other than the Architect sends an idle notification, forward it to the Architect via SendMessage. Include the teammate's name and any summary from the notification.
+
+**Architect → user:** Messages from the Architect to you (design proposals, escalations, completion reports) are meant for the user — relay those to the user, not back to the Architect.
+
+**User → Architect:** If the user sends you a message, forward it to the Architect (unless it's clearly directed at a specific agent by name).
+
+**`/goal` and `/loop` signals:** The user may use `/goal` to set a high-level objective or `/loop` to keep you active as a relay. When these are used:
+- Forward the goal context to the Architect via SendMessage so it can align its work accordingly
+- In `/loop` mode, use `ScheduleWakeup` to stay active as the relay. On each wake-up, check for any pending teammate notifications or user messages and forward them to the Architect. Use a reasonable interval (60-120s) so the Architect gets timely updates without excessive churn.
+
 ## Workflow
 
 ```

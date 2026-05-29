@@ -40,8 +40,8 @@ To understand how the system works without launching anything:
 | **Reviewer** | magenta | Read-only + Bash | Quality gatekeeper. Reviews code and tests with structured feedback and severity levels. |
 | **Critique** | red | Read-only + Bash | Final gate. Challenges every decision from first principles. Checks plan adherence, simplicity, and UX. Intervenes when the team is stuck in superficial fix loops. |
 | **Documenter** | blue | All | Writes user-facing documentation. Docs must be self-sufficient for users with no source code access. |
-| **Instructor** | cyan | Read-only + Bash | Designs realistic user tasks, dispatches them to the Noob, diagnoses usability failures, produces UX findings report. |
-| **Noob** | yellow | Bash only | Simulates a naive first-time user. Tests software using ONLY documentation, help text, and error messages. Never reads source code. |
+| **Instructor** | cyan | Read-only + Bash | Designs realistic user tasks, spawns a Noob subagent (via the Task tool) for each one, diagnoses usability failures, produces UX findings report. |
+| **Noob** | yellow | Bash only | Subagent of the Instructor, not a peer. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user. Tests software using ONLY documentation, help text, and error messages. Never reads source code. |
 
 ## Pipeline
 
@@ -52,7 +52,7 @@ User requirement
       -> Reviewer (code quality, correctness, test coverage)
         -> Critique (plan adherence, first principles, UX scrutiny)
           -> Documenter (user-facing documentation)
-            -> Instructor + Noob (usability testing)
+            -> Instructor (spawns Noob subagent per task; usability testing)
               -> Architect (merge if passes, or route fixes back)
 ```
 

@@ -6,7 +6,7 @@ This protocol governs communication between teams. It applies to team leads and 
 
 | Team | Lead | Members |
 |------|------|---------|
-| Dev Team | Architect | Implementer, Tester, Reviewer, Critique, Documenter, Instructor, Noob |
+| Dev Team | Architect | Implementer, Tester, Reviewer, Critique, Documenter, Instructor (Noob is a subagent of Instructor, not a peer) |
 | Data Team | Accountant | Minute-men (dynamically spawned) |
 
 ## The Committee
@@ -33,7 +33,7 @@ Committee discussions happen via SendMessage between the members. Either lead ca
 ### Lead-to-Committee-Member
 
 - Accountant can message Critique and Reviewer directly for committee discussions
-- Accountant does NOT message Implementer, Tester, Documenter, Instructor, or Noob directly
+- Accountant does NOT message Implementer, Tester, Documenter, or Instructor directly (and cannot reach Noob at all — it is the Instructor's subagent, not a peer)
 - Architect can message Accountant directly
 
 ### Workers

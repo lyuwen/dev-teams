@@ -1,12 +1,12 @@
 ---
 name: dev-team
 description: |
-  Launch a coordinated development team with Architect, Implementer, Tester, Reviewer, Critique, Documenter, Instructor, and Noob agents. This skill should be used whenever the user wants to build a feature, start a project, implement something substantial, or delegate development work to a team of agents. Trigger this when the user says things like "launch the dev team", "spin up the team", "build this with the team", "use the dev team to...", "have the team implement...", or describes a development task and wants coordinated agents to handle it — even if they don't explicitly say "team" or "agents". If the user describes a multi-step development task (building a CLI tool, adding a module, creating a library), this skill is likely what they need. The argument is the requirement to pass to the Architect.
+  Launch a coordinated development team with Architect, Implementer, Tester, Reviewer, Critique, Documenter, and Instructor as peer agents. The Instructor spawns a Noob subagent on demand for usability testing — Noob is not a peer and is not launched at startup. This skill should be used whenever the user wants to build a feature, start a project, implement something substantial, or delegate development work to a team of agents. Trigger this when the user says things like "launch the dev team", "spin up the team", "build this with the team", "use the dev team to...", "have the team implement...", or describes a development task and wants coordinated agents to handle it — even if they don't explicitly say "team" or "agents". If the user describes a multi-step development task (building a CLI tool, adding a module, creating a library), this skill is likely what they need. The argument is the requirement to pass to the Architect.
 ---
 
 # Dev Team Launcher
 
-Launch a coordinated 8-agent development team and hand off the user's requirement to the Architect.
+Launch a coordinated 8-agent development team and hand off the user's requirement to the Architect. Seven of those agents (Architect + 6 peers) are spawned at launch; the eighth (Noob) is spawned on demand by the Instructor as a subagent during usability testing — so it has no startup lifecycle of its own.
 
 The user's requirement is the argument passed to this skill. If no argument was provided, ask what they want the team to build before proceeding.
 
@@ -20,8 +20,8 @@ The user's requirement is the argument passed to this skill. If no argument was 
 | **Reviewer** | Reviews code & tests, provides structured feedback with severity levels | Read, Grep, Glob, Bash |
 | **Critique** | Final gate — plan adherence, first-principles challenge, UX scrutiny | Read, Grep, Glob, Bash |
 | **Documenter** | Writes/maintains user-facing documentation on the delivery branch after code is merged; docs must be self-sufficient for users with no source code | All |
-| **Instructor** | Designs realistic user tasks, dispatches to Noob, diagnoses usability failures, produces UX report | Read, Grep, Glob, Bash |
-| **Noob** | Simulates naive first-time user — tests software using ONLY docs, help text, and error messages (no source code) | Bash |
+| **Instructor** | Designs realistic user tasks, spawns Noob subagent for each task, diagnoses usability failures, produces UX report | Read, Grep, Glob, Bash |
+| **Noob** (Instructor's subagent — not launched at startup) | Simulates naive first-time user — tests software using ONLY docs, help text, and error messages (no source code). Spawned by Instructor via the Task tool, one fresh invocation per task. | Bash |
 
 ## Launch Sequence
 
@@ -72,8 +72,8 @@ Spawn the Architect as a teammate using the Agent tool with the derived `team_na
 
 Include in the prompt:
 - The user's full requirement (verbatim)
-- That seven teammates are available: `implementer`, `tester`, `reviewer`, `critique`, `documenter`, `instructor`, `noob`
-- The workflow: the Architect creates a `dev/<feature>` delivery branch from main, then creates worker branches (`feat/`, `test/`) from it for Implementer and Tester to work on in parallel. After Reviewer and Critique approve, the Architect merges worker branches into `dev/<feature>`. Documenter then writes docs on `dev/<feature>`, followed by Instructor+Noob usability testing.
+- That six teammates are available: `implementer`, `tester`, `reviewer`, `critique`, `documenter`, `instructor` (the Instructor spawns a `noob` subagent on demand during usability testing — do not message Noob directly)
+- The workflow: the Architect creates a `dev/<feature>` delivery branch from main, then creates worker branches (`feat/`, `test/`) from it for Implementer and Tester to work on in parallel. After Reviewer and Critique approve, the Architect merges worker branches into `dev/<feature>`. Documenter then writes docs on `dev/<feature>`, followed by Instructor usability testing (which internally spawns the Noob subagent for each user task).
 - That the Architect owns the entire branch lifecycle — it creates, merges, and cleans up all branches. Sub-agents never create branches; they work on branches assigned to them.
 - That the final deliverable is a single `dev/<feature>` branch aggregating all code, tests, and docs, ready to PR into main
 - That high-level design decisions must be escalated to the user — present the technical approach (including branching strategy) before assigning work
@@ -84,7 +84,7 @@ Include in the prompt:
 
 ### Step 6: Spawn the remaining agents
 
-Spawn all seven in parallel using the Agent tool, each with the derived `team_name`:
+Spawn all six in parallel using the Agent tool, each with the derived `team_name`. **Do NOT spawn the Noob at startup** — Noob is the Instructor's subagent and is invoked via the Task tool during usability testing, not as a peer teammate.
 
 **Implementer** — `name: "implementer"`, subagent_type `implementer`
 - Tell it the Architect is the team lead and will assign tasks
@@ -120,14 +120,9 @@ Spawn all seven in parallel using the Agent tool, each with the derived `team_na
 - Tell it the Architect assigns usability testing tasks after Documenter finishes
 - It should read `.claude/team-memory/MEMORY.md` at the start of each task
 - It should create or update a focused memory topic file when it learns a reusable preference, correction, or decision, then message the Architect to index it
-- It designs user tasks and dispatches them to the Noob
+- It designs user tasks and spawns a Noob subagent (via the Task tool, `subagent_type: "noob"`) for each one — the Noob is NOT a peer teammate
 
-**Noob** — `name: "noob"`, subagent_type `noob`
-- Tell it the Instructor will send tasks
-- It should read `.claude/team-memory/MEMORY.md` before each task using Bash-only tools
-- It should report reusable preference/correction findings back through the Instructor so the Architect can index them
-- It works in an isolated temp directory, using only Bash
-- It must never read source code
+> **Note on the Noob:** The Noob is invoked by the Instructor as a subagent (Task tool, `subagent_type: "noob"`), one fresh invocation per task. It is not spawned at launch and has no team lifecycle. Its agent file (`agents/noob.md`) is still required so the subagent type resolves, but the dev-team launcher does not spawn it.
 
 ### Step 6a: Verify spawns and retry failures
 
@@ -139,7 +134,7 @@ After all spawn calls return, check the results. If any agent failed to spawn (4
    - Retry all failed agents
    - Abort and investigate
 
-Do NOT proceed to Step 7 until the Architect and at least the core build agents (Implementer, Tester, Reviewer) are confirmed alive. The usability agents (Documenter, Instructor, Noob) can be spawned later when needed if they fail at launch.
+Do NOT proceed to Step 7 until the Architect and at least the core build agents (Implementer, Tester, Reviewer) are confirmed alive. The usability agents (Documenter, Instructor) can be spawned later when needed if they fail at launch. (Noob is not in this list — it has no startup lifecycle; Instructor invokes it on demand via the Task tool.)
 
 ### Step 7: Report to user
 
@@ -176,7 +171,7 @@ User requirement
           → Critique (plan adherence, first-principles challenge, UX scrutiny)
             → Architect merges worker branches into dev/<feature>
               → Documenter (writes/updates docs on dev/<feature>)
-                → Instructor + Noob (usability testing)
+                → Instructor (designs user tasks; spawns Noob subagent per task via Task tool)
                   → Architect (finalizes dev/<feature>, cleans up worker branches, reports PR-ready branch)
 ```
 

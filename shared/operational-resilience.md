@@ -53,9 +53,11 @@ Your team lead monitors team health. Help by being communicative:
 4. **Never go silent** — if you're stuck, blocked, or confused, say so. Silence stalls the pipeline.
 5. **Respond to check-ins** — if your team lead asks for a status check, respond immediately with your current state
 
-## For Agents Without SendMessage (e.g., Noob)
+## For Agents Without SendMessage
 
-If you cannot use SendMessage, you must still be communicative:
+This section is forward-compatible: it applies to any peer teammate that doesn't have SendMessage. As of this writing, no current dev/data team peer agent fits this case — the Noob, which used to be the example here, is now invoked as a subagent of the Instructor rather than as a peer, so its final return value is its report and this protocol doesn't apply.
+
+If a future peer agent cannot use SendMessage, it must still be communicative:
 
 1. **Work visibly** — produce output with every step so your observer can monitor progress
 2. **Report errors in your output** — if something fails, describe what happened, what you expected, and what you tried next

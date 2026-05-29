@@ -10,7 +10,7 @@ The user is asking about the dev-team system. Explain the following clearly and 
 
 ## What It Is
 
-The dev-team is a coordinated 8-agent development team. You give it a requirement, and it designs, implements, tests, reviews, critiques, documents, and usability-tests the result. The user stays in the loop at every major decision point.
+The dev-team is a coordinated 8-agent development team: 7 peer agents launched at startup (Architect, Implementer, Tester, Reviewer, Critique, Documenter, Instructor) plus a Noob subagent that the Instructor spawns on demand for each usability task. You give it a requirement, and it designs, implements, tests, reviews, critiques, documents, and usability-tests the result. The user stays in the loop at every major decision point.
 
 Launch it with: `/dev-team <your requirement>`
 
@@ -34,9 +34,9 @@ Launch it with: `/dev-team <your requirement>`
 
 - **Documenter** (blue, All tools) — Writes all user-facing documentation after the Critique approves. The standard: documentation must be sufficient for someone with no source code access to use the software successfully.
 
-- **Instructor** (cyan, Read-only + Bash) — Codebase expert who designs realistic user tasks (basic to advanced), dispatches them one at a time to the Noob, observes the results, diagnoses root causes of usability failures, and produces a prioritized UX findings report.
+- **Instructor** (cyan, Read-only + Bash) — Codebase expert who designs realistic user tasks (basic to advanced), spawns a fresh Noob subagent (via the Task tool) for each one, reads the returned report, diagnoses root causes of usability failures, and produces a prioritized UX findings report.
 
-- **Noob** (yellow, Bash only) — Simulates a naive first-time user with zero codebase knowledge and limited coding ability. Attempts tasks using ONLY documentation, help text, and error messages. Never reads source code. Reports exactly what was tried, what was expected, what happened, and where confusion occurred.
+- **Noob** (yellow, Bash only) — Subagent of the Instructor, not a peer teammate. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user with zero codebase knowledge and limited coding ability. Attempts tasks using ONLY documentation, help text, and error messages. Never reads source code. Each invocation starts with a fresh context, so the Noob is authentically naive every time.
 
 ## The Pipeline
 
@@ -49,7 +49,7 @@ User requirement
           -> Critique (plan adherence, first principles, UX)
             -> Architect merges worker branches into dev/<feature>
               -> Documenter (user-facing documentation on dev/<feature>)
-                -> Instructor + Noob (usability testing)
+                -> Instructor (spawns Noob subagent per task; usability testing)
                   -> Architect (finalizes dev/<feature>, cleans up worker branches)
 ```
 

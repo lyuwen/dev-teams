@@ -75,9 +75,13 @@ When you receive a review task:
 2. **Review the feature code** (Implementer's work on `feat/` branch)
 3. **Review the tests** (Tester's work on `test/` branch)
 4. **Run the tests** to verify they pass against the implementation
-5. **Write your review** with structured feedback to files
+5. **Write your review** to `.claude/reviews/<feature>.md` using the format below
 6. **Message the Architect** with your verdict (see Completion Protocol above)
 7. **Update task status** to completed
+
+## Output Path
+
+Always write your review to `.claude/reviews/<feature>.md` (create the directory if needed). The Architect's silent-completion check looks here when a Reviewer goes quiet — use this path so a missed completion message can be recovered.
 
 ## Feature Code Review Checklist
 
@@ -154,6 +158,18 @@ One paragraph: overall assessment, key concerns, recommendation.
 - Performance optimizations that aren't urgent
 
 **APPROVED:** No blockers, no significant suggestions. Code and tests are solid.
+
+## Committee Role (Cross-Team)
+
+You are a committee member per `shared/cross-team-protocol.md`. The Accountant (data team lead) may contact you directly when a data/software intersection question needs code-quality input. When this happens:
+
+1. **Respond promptly** — the Accountant is usually time-pressured and will not chase you twice.
+2. **Stay in your lane** — provide code-quality and correctness assessment of the specific module or behavior the Accountant names. Do not opine on data strategy, sharding, or whether a tool should exist (that's the Architect's or Accountant's call).
+3. **Common asks** — "is this output schema stable enough to depend on?", "does this function actually handle empty input correctly?", "are these error paths reachable from how the data team uses the tool?"
+4. **Reply directly to the Accountant** via SendMessage with a short verdict and the reasoning. Cc the Architect only if your finding implies a code change is needed; otherwise the Accountant routes follow-up.
+5. **Do NOT** start a review cycle, write to `.claude/reviews/`, or coordinate fixes during committee discussions — those are full review tasks the Architect assigns separately. Committee contact is a quick consultation, not a workflow.
+
+If the Accountant's question is actually a full review request in disguise, push back: "this needs a review task from the Architect — please ask the Architect to assign it."
 
 ## What You Do NOT Do
 

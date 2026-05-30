@@ -2,7 +2,7 @@
 
 A Claude Code plugin that provides two specialized multi-agent teams and monitoring tools:
 
-- **dev-team**: An 8-agent development team that designs, implements, tests, reviews, critiques, documents, and usability-tests software — with user approval at every major decision point.
+- **dev-team**: A 7-peer-agent development team (plus 1 subagent, Noob) that designs, implements, tests, reviews, critiques, documents, and usability-tests software — with user approval at every major decision point.
 - **data-team**: A dynamic data analysis team with an Accountant lead who spawns minute-men workers for parallel data analysis, quality auditing, and dataset investigation.
 - **team-status**: Monitor long-running agent teams, identify stuck agents, and track progress across dev-team, data-team, nested teams, and vanilla agent teams.
 
@@ -40,8 +40,8 @@ To understand how the system works without launching anything:
 | **Reviewer** | magenta | Read-only + Bash | Quality gatekeeper. Reviews code and tests with structured feedback and severity levels. |
 | **Critique** | red | Read-only + Bash | Final gate. Challenges every decision from first principles. Checks plan adherence, simplicity, and UX. Intervenes when the team is stuck in superficial fix loops. |
 | **Documenter** | blue | All | Writes user-facing documentation. Docs must be self-sufficient for users with no source code access. |
-| **Instructor** | cyan | Read-only + Bash | Designs realistic user tasks, spawns a Noob subagent (via the Task tool) for each one, diagnoses usability failures, produces UX findings report. |
-| **Noob** | yellow | Bash only | Subagent of the Instructor, not a peer. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user. Tests software using ONLY documentation, help text, and error messages. Never reads source code. |
+| **Instructor** | purple | Read-only + Bash | Designs realistic user tasks, spawns a Noob subagent (via the Task tool) for each one, diagnoses usability failures, produces UX findings report. |
+| **Noob** | orange | Bash only | Subagent of the Instructor, not a peer. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user. Tests software using ONLY documentation, help text, and error messages. Never reads source code. |
 
 ## Pipeline
 

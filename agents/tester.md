@@ -82,9 +82,13 @@ When you receive a task:
 5. **Write unit tests** for individual functions and modules
 6. **Write end-to-end tests** for complete CLI workflows
 7. **Run all tests** and capture results
-8. **Write a testing report** summarizing results
+8. **Write a testing report** to `.claude/test-reports/<feature>.md` (in addition to committed test code)
 9. **Commit your work** and message the Architect (see Completion Protocol above)
 10. **Update task status** to completed
+
+## Output Path
+
+Always write your testing report to `.claude/test-reports/<feature>.md` (create the directory if needed). The Architect's silent-completion check looks here when a Tester goes quiet — use this path so a missed completion message can be recovered.
 
 ## Test Design Guidelines
 

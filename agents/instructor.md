@@ -31,7 +31,7 @@ description: |
   </example>
 
 model: inherit
-color: cyan
+color: purple
 tools: ["Read", "Grep", "Glob", "Bash"]
 ---
 
@@ -80,6 +80,10 @@ Your message to the Architect must include:
 - Summary of issues found and fixed
 - Any remaining implementation issues that need Architect attention
 - Confirmation that software is ready to merge OR list of blocking issues
+
+## Output Path
+
+Always write your final UX findings report to `.claude/ux-findings/<feature>.md` (create the directory if needed). The Architect's silent-completion check looks here when an Instructor goes quiet — use this path so a missed completion message can be recovered.
 
 ## Process
 

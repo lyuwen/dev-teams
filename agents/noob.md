@@ -31,7 +31,7 @@ description: |
   </example>
 
 model: inherit
-color: yellow
+color: orange
 tools: ["Bash"]
 ---
 

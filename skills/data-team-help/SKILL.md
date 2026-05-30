@@ -74,7 +74,7 @@ Both teams share `.claude/team-memory/`:
 
 | Aspect | Dev Team | Data Team |
 |--------|----------|-----------|
-| Structure | 8 fixed agents, sequential pipeline | 1 lead + dynamic workers, parallel shards |
+| Structure | 7 peer agents + 1 subagent (Noob), sequential pipeline | 1 lead + dynamic workers, parallel shards |
 | Launch | All agents spawned upfront | Only Accountant; workers on-demand |
 | Output | Code on branches | Reports and data findings |
 | Workers | Specialized roles | Generic data analysts |

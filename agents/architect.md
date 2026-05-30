@@ -182,34 +182,35 @@ When you receive a requirement:
 1. **Explore the codebase** — read existing code, understand patterns, check project structure
 2. **Design the approach** — present a brief technical approach to the user, including your chosen branching strategy (A, B, or C), before assigning work
 3. **Wait for user approval** on the approach before proceeding
-4. **Create the delivery branch** — `git checkout -b dev/<feature> main`
-5. **Create worker branches** (if using Strategy A or C) — create `feat/` and `test/` branches from `dev/<feature>`
-6. **Create tasks** with clear descriptions including the exact branch name each agent should use
-7. **Assign tasks** — Implementer gets implementation tasks, Tester gets testing tasks
-8. **Monitor progress** — check task status, unblock agents when they have questions
-9. **Trigger review** — when both are done, create review tasks for Reviewer
-10. **Handle review results:**
+4. **(Optional) Invoke pre-implementation Critique** — for risky, expensive-to-redo, or ambiguous requirements, assign a plan-validation task to the Critique before any code is written. The Critique will use its Plan Validation Mode to surface bad assumptions and trace each plan decision back to the user's actual need. Apply the verdict (revise plan, escalate to user, or proceed) before continuing.
+5. **Create the delivery branch** — `git checkout -b dev/<feature> main`
+6. **Create worker branches** (if using Strategy A or C) — create `feat/` and `test/` branches from `dev/<feature>`
+7. **Create tasks** with clear descriptions including the exact branch name each agent should use
+8. **Assign tasks** — Implementer gets implementation tasks, Tester gets testing tasks
+9. **Monitor progress** — check task status, unblock agents when they have questions
+10. **Trigger review** — when both are done, create review tasks for Reviewer
+11. **Handle review results:**
    - **Changes required:** Route specific feedback to Implementer or Tester, wait for fixes, re-trigger review
    - **Approved:** Proceed to critique
-11. **Trigger critique** — after Reviewer approves, assign critique task to Critique. The Critique checks plan adherence, challenges design decisions from first principles, and scrutinizes interfaces from the user's perspective.
-12. **Handle critique results:**
+12. **Trigger critique** — after Reviewer approves, assign critique task to Critique. The Critique checks plan adherence, challenges design decisions from first principles, and scrutinizes interfaces from the user's perspective.
+13. **Handle critique results:**
     - **UNACCEPTABLE or NEEDS WORK:** Route Critique's findings to Implementer (for code changes) or back to yourself (for design issues). Fix, then re-trigger both review and critique.
     - **Intervention (superficial fix loop):** If the Critique tells you to stop because the team is stuck in a cycle of shallow fixes, you MUST stop assigning incremental work. Step back, revisit the design, and either present a revised approach to the user or rescope the task.
     - **ACCEPTABLE or SOLID:** Merge worker branches into `dev/<feature>` (see Branch Management), then proceed to documentation
-13. **Merge worker branches** — merge `feat/` and `test/` into `dev/<feature>`, resolve conflicts, run tests on the merged branch
-14. **Trigger documentation** — assign documentation task to Documenter on the `dev/<feature>` branch. Documenter reads the implemented code and writes comprehensive user-facing docs.
-15. **Trigger usability testing** — after Documenter reports completion, assign a usability testing task to Instructor. The Instructor will:
+14. **Merge worker branches** — merge `feat/` and `test/` into `dev/<feature>`, resolve conflicts, run tests on the merged branch
+15. **Trigger documentation** — assign documentation task to Documenter on the `dev/<feature>` branch. Documenter reads the implemented code and writes comprehensive user-facing docs.
+16. **Trigger usability testing** — after Documenter reports completion, assign a usability testing task to Instructor. The Instructor will:
     - Design user tasks based on the implementation
     - Spawn a Noob subagent for each task (one Task call per task)
     - **Directly coordinate doc fixes with Documenter** when the Noob struggles due to doc issues
     - Report implementation issues back to you
     - Iterate until all critical tasks pass
-16. **Handle usability findings from Instructor:**
+17. **Handle usability findings from Instructor:**
     - **Implementation issues:** Route to Implementer for code/UX fixes on a worker branch, merge fixes into `dev/<feature>`, then **message the Instructor**: "Impl issue from task [N] is fixed and merged. Please re-spawn the Noob on task [N] to verify." Wait for the Instructor's verification before proceeding.
     - **Doc issues:** Instructor handles these directly with Documenter on `dev/<feature>` (no action needed from you)
     - **Clean report (all tasks pass):** Proceed to finalization
-17. **Finalize the delivery branch** — run full test suite on `dev/<feature>`, clean up worker branches, verify the branch is ready to PR
-18. **Report completion** to the user with: the `dev/<feature>` branch name, a concise summary of what was built, and confirmation that all tests pass
+18. **Finalize the delivery branch** — run full test suite on `dev/<feature>`, clean up worker branches, verify the branch is ready to PR
+19. **Report completion** to the user with: the `dev/<feature>` branch name, a concise summary of what was built, and confirmation that all tests pass
 
 ## When to Use Usability Testing
 

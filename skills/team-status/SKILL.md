@@ -1,7 +1,7 @@
 ---
 name: team-status
 description: |
-  Check the status of long-running agent teams and identify stuck agents. Use this skill when the user asks for a "status check", "status report", "team status", "how's the team doing", "what's the progress", or similar questions about ongoing agent work. Also use when the user mentions agents being slow, stuck, or wants to know what agents are currently doing. This skill works with dev-team (8-agent development pipeline), data-team (Accountant + minute-men), nested teams (data-team that spawned dev-team), and vanilla agent teams. Triggers even if the user doesn't explicitly say "team" - phrases like "what's happening", "any progress", "are they done yet" when agents are active should invoke this skill.
+  Check the status of long-running agent teams and identify stuck agents. Use this skill when the user asks for a "status check", "status report", "team status", "how's the team doing", "what's the progress", or similar questions about ongoing agent work. Also use when the user mentions agents being slow, stuck, or wants to know what agents are currently doing. This skill works with dev-team (7-peer-agent development pipeline plus a Noob subagent), data-team (Accountant + minute-men), nested teams (data-team that spawned dev-team), and vanilla agent teams. Triggers even if the user doesn't explicitly say "team" - phrases like "what's happening", "any progress", "are they done yet" when agents are active should invoke this skill.
 ---
 
 # Team Status Checker

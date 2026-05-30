@@ -17,7 +17,7 @@ The user's data task is the argument passed to this skill. If no argument was pr
 | **Accountant** (team lead) | Receives data tasks, decides sharding strategy, spawns minute-men, aggregates results, reports to user | Spawned at launch |
 | **Minuteman** (worker) | Analyzes an assigned data shard, writes reports, flags tool gaps | Spawned on-demand by the Accountant |
 
-Unlike the dev-team which spawns all 8 agents upfront, the data team only spawns the Accountant at launch. Minute-men are ephemeral — the Accountant spawns them per-task based on the work required.
+Unlike the dev-team which spawns 7 peer agents upfront, the data team only spawns the Accountant at launch. Minute-men are ephemeral — the Accountant spawns them per-task based on the work required.
 
 ## Launch Sequence
 
@@ -88,7 +88,7 @@ Tell the user:
 
 | Aspect | Dev Team | Data Team |
 |--------|----------|-----------|
-| Launch | All 8 agents spawned upfront | Only Accountant spawned; minute-men on-demand |
+| Launch | 7 peer agents spawned upfront (Noob is a subagent of Instructor) | Only Accountant spawned; minute-men on-demand |
 | Workers | Fixed roles (Implementer, Tester, etc.) | Generic minute-men, sharded by data |
 | Pipeline | Sequential phases (build -> review -> usability) | Parallel shards -> aggregation |
 | Output | Code on branches | Reports and findings files |

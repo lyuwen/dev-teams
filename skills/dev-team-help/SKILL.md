@@ -10,11 +10,11 @@ The user is asking about the dev-team system. Explain the following clearly and 
 
 ## What It Is
 
-The dev-team is a coordinated 8-agent development team: 7 peer agents launched at startup (Architect, Implementer, Tester, Reviewer, Critique, Documenter, Instructor) plus a Noob subagent that the Instructor spawns on demand for each usability task. You give it a requirement, and it designs, implements, tests, reviews, critiques, documents, and usability-tests the result. The user stays in the loop at every major decision point.
+The dev-team is a coordinated team of 7 peer agents (Architect, Implementer, Tester, Reviewer, Critique, Documenter, Instructor) launched at startup, plus a Noob subagent that the Instructor spawns on demand for each usability task. You give it a requirement, and it designs, implements, tests, reviews, critiques, documents, and usability-tests the result. The user stays in the loop at every major decision point.
 
 Launch it with: `/dev-team <your requirement>`
 
-## The 8 Agents
+## The Agents
 
 ### Build Phase
 
@@ -26,17 +26,33 @@ Launch it with: `/dev-team <your requirement>`
 
 ### Review Phase
 
-- **Reviewer** (magenta, Read-only + Bash) — Quality gatekeeper. Reviews both the Implementer's code and the Tester's tests. Provides structured feedback with severity levels: blockers (must fix) vs. suggestions (nice to have). Cannot edit code — only provides feedback.
+- **Reviewer** (magenta, Read-only + Bash) — Quality gatekeeper. Reviews both the Implementer's code and the Tester's tests. Provides structured feedback with severity levels: blockers (must fix) vs. suggestions (nice to have). Cannot edit code — only provides feedback. Writes its review to `.claude/reviews/<feature>.md`.
 
-- **Critique** (red, Read-only + Bash) — The harshest judge. Runs after the Reviewer approves. Challenges every design decision from first principles ("why this, and not something simpler?"). Checks plan adherence, scrutinizes UX from the user's perspective, and flags unnecessary complexity. Has a special intervention protocol to break superficial fix loops — when the team keeps making shallow edits without solving the root problem, the Critique halts work and forces a redesign.
+- **Critique** (red, Read-only + Bash) — The harshest judge. Runs after the Reviewer approves (and can also be invoked earlier on the plan itself — see Plan Validation Mode below). Challenges every design decision from first principles ("why this, and not something simpler?"). Checks plan adherence, scrutinizes UX from the user's perspective, and flags unnecessary complexity. Has a special intervention protocol to break superficial fix loops — when the team keeps making shallow edits without solving the root problem, the Critique halts work and forces a redesign. Writes its critique to `.claude/critiques/<feature>.md`.
 
 ### Usability Phase
 
 - **Documenter** (blue, All tools) — Writes all user-facing documentation after the Critique approves. The standard: documentation must be sufficient for someone with no source code access to use the software successfully.
 
-- **Instructor** (cyan, Read-only + Bash) — Codebase expert who designs realistic user tasks (basic to advanced), spawns a fresh Noob subagent (via the Task tool) for each one, reads the returned report, diagnoses root causes of usability failures, and produces a prioritized UX findings report.
+- **Instructor** (purple, Read-only + Bash) — Codebase expert who designs realistic user tasks (basic to advanced), spawns a fresh Noob subagent (via the Task tool) for each one, reads the returned report, diagnoses root causes of usability failures, and produces a prioritized UX findings report at `.claude/ux-findings/<feature>.md`.
 
-- **Noob** (yellow, Bash only) — Subagent of the Instructor, not a peer teammate. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user with zero codebase knowledge and limited coding ability. Attempts tasks using ONLY documentation, help text, and error messages. Never reads source code. Each invocation starts with a fresh context, so the Noob is authentically naive every time.
+- **Noob** (orange, Bash only) — Subagent of the Instructor, not a peer teammate. Spawned on demand for each usability task and terminates after returning its report. Simulates a naive first-time user with zero codebase knowledge and limited coding ability. Attempts tasks using ONLY documentation, help text, and error messages. Never reads source code. Each invocation starts with a fresh context, so the Noob is authentically naive every time.
+
+## Plan Validation Mode (Optional)
+
+The Critique normally runs after implementation, but it can also be invoked earlier on the Architect's **plan** before any code exists. Use this when the requirement is risky or expensive to redo — the Critique applies the same first-principles methodology to the plan itself, surfaces bad assumptions before they become bad code, and writes its verdict to `.claude/critiques/<feature>-plan.md`. The Architect decides when to use this; it is not part of the default pipeline.
+
+## Artifact Locations
+
+Each non-lead agent writes a durable artifact to a standardized location, so the Architect can recover from a missed completion message and you can inspect what each agent produced:
+
+| Agent | Artifact |
+|-------|----------|
+| Tester | `.claude/test-reports/<feature>.md` (plus committed test code) |
+| Reviewer | `.claude/reviews/<feature>.md` |
+| Critique | `.claude/critiques/<feature>.md` (or `<feature>-plan.md` in Plan Validation Mode) |
+| Instructor | `.claude/ux-findings/<feature>.md` |
+| Implementer, Documenter | Commits on the assigned branch (no separate artifact file) |
 
 ## The Pipeline
 

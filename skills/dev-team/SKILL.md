@@ -6,7 +6,7 @@ description: |
 
 # Dev Team Launcher
 
-Launch a coordinated 8-agent development team and hand off the user's requirement to the Architect. Seven of those agents (Architect + 6 peers) are spawned at launch; the eighth (Noob) is spawned on demand by the Instructor as a subagent during usability testing — so it has no startup lifecycle of its own.
+Launch a coordinated dev team and hand off the user's requirement to the Architect. The team has 7 peer agents (Architect + 6 peers) spawned at launch; an 8th, Noob, is spawned on demand by the Instructor as a subagent during usability testing — it has no startup lifecycle of its own.
 
 The user's requirement is the argument passed to this skill. If no argument was provided, ask what they want the team to build before proceeding.
 

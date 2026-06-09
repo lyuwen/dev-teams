@@ -6,6 +6,10 @@ A Claude Code plugin that provides two specialized multi-agent teams and monitor
 - **data-team**: A dynamic data analysis team with an Accountant lead who spawns minute-men workers for parallel data analysis, quality auditing, and dataset investigation.
 - **team-status**: Monitor long-running agent teams, identify stuck agents, and track progress across dev-team, data-team, nested teams, and vanilla agent teams.
 
+## License
+
+MIT License - Copyright (c) 2026 Lyuwen Fu. See [LICENSE](LICENSE) for full details.
+
 ---
 
 ## Dev Team

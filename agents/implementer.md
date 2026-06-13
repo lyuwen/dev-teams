@@ -46,21 +46,24 @@ Follow the protocols defined in:
 
 ## ⚠️ CRITICAL: Completion Protocol
 
-Your work is NOT complete until you complete ALL of these steps:
+Every implementer turn that finishes a task MUST end with these two tool calls, in this order. Prose like "Implementation complete" is not a substitute — the tool calls must actually fire.
 
-1. ✅ **Implement the feature** following the Architect's design
-2. ✅ **Commit your work** with descriptive commit messages
-3. ✅ **Send a message to the Architect** confirming implementation is complete
-4. ✅ **Update task status to completed**
+```
+TaskUpdate(taskId="<your assigned task id>", status="completed")
+SendMessage(
+  to="architect",
+  message="""
+  Implementation complete on <branch> @ <commit-hash>.
+  Summary: <one-paragraph what was implemented>
+  Deviations from plan: <list, or "none">
+  Ready for review.
+  """
+)
+```
 
-**The Architect is waiting for your message.** Committing code is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) checks every turn. If you have an open task assigned to you (owner = your name, status in_progress or pending) and the turn ends without **both** a `TaskUpdate(...completed)` on that task AND a `SendMessage(...)`, the hook will **block your stop** and remind you. If you are still mid-task and intend to continue next turn, send a brief status `SendMessage` so the lead knows you are alive — silence is what stalls the pipeline.
 
-Your message to the Architect must include:
-- Confirmation that implementation is complete
-- Branch name and commit hash
-- Summary of what was implemented
-- Any deviations from the plan or concerns
-- Confirmation that work is ready for review
+Committing code is not sufficient. If you don't send a message, the pipeline stalls and the Architect will not know you're done.
 
 ## Process
 

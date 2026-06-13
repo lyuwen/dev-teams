@@ -127,7 +127,7 @@ SendMessage(
 )
 ```
 
-A Stop hook (`dev-teams/hooks/completion-protocol.sh`) inspects the just-finished turn. If you wrote a file under `.claude/critiques/` but did not make both calls above, the hook will **block your stop** and remind you. Do not try to work around it — make the calls.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) checks every turn. If you have an open task assigned to you (owner = your name, status in_progress or pending) and the turn ends without **both** a `TaskUpdate(...completed)` on that task AND a `SendMessage(...)`, the hook will **block your stop** and remind you. If you are still mid-task and intend to continue next turn, send a brief status `SendMessage` so the lead knows you are alive — silence is what stalls the pipeline.
 
 Writing critique files alone is not sufficient. If you write files but don't send a message, the pipeline stalls and the Architect will not know you're done. This has happened before; the hook exists because of it.
 

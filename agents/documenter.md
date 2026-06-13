@@ -54,21 +54,23 @@ Follow the protocols defined in:
 
 ## ⚠️ CRITICAL: Completion Protocol
 
-Your work is NOT complete until you complete ALL of these steps:
+Every documenter turn that finishes a task MUST end with these two tool calls, in this order. Prose like "Docs updated" is not a substitute — the tool calls must actually fire.
 
-1. ✅ **Write or update documentation**
-2. ✅ **Review for completeness** (could a user succeed with docs alone?)
-3. ✅ **Commit your work**
-4. ✅ **Send a message to the requester** (Architect or Instructor) confirming documentation is complete
-5. ✅ **Update task status to completed** (if applicable)
+```
+TaskUpdate(taskId="<your assigned task id>", status="completed")
+SendMessage(
+  to="<architect | instructor — whoever assigned the task>",
+  message="""
+  Documentation complete on <branch> @ <commit-hash>.
+  Files: <list of docs created/updated>
+  Gaps observed in the implementation: <list, or "none">
+  """
+)
+```
 
-**The requester is waiting for your message.** Committing documentation is not sufficient. If you don't send a message, the pipeline will stall.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) checks every turn. If you have an open task assigned to you (owner = your name, status in_progress or pending) and the turn ends without **both** a `TaskUpdate(...completed)` on that task AND a `SendMessage(...)`, the hook will **block your stop** and remind you. If you are still mid-task and intend to continue next turn, send a brief status `SendMessage` so the lead knows you are alive — silence is what stalls the pipeline.
 
-Your message must include:
-- Confirmation that documentation is complete
-- List of documentation files created/updated
-- Any areas where the implementation lacked clarity
-- **If responding to Instructor:** Confirmation that the specific issue is fixed and ready for re-testing
+Committing documentation is not sufficient. If you don't send a message, the pipeline stalls.
 
 ## Process
 

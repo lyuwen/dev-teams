@@ -55,21 +55,25 @@ Follow the protocols defined in:
 
 ## ⚠️ CRITICAL: Completion Protocol
 
-Your work is NOT complete until you complete ALL of these steps:
+Every tester turn that finishes a task MUST end with these two tool calls, in this order. Prose like "All tests passing" is not a substitute — the tool calls must actually fire.
 
-1. ✅ **Write and run all tests**
-2. ✅ **Write a testing report** summarizing results
-3. ✅ **Commit your work**
-4. ✅ **Send a message to the Architect** with test results summary
-5. ✅ **Update task status to completed**
+```
+TaskUpdate(taskId="<your assigned task id>", status="completed")
+SendMessage(
+  to="architect",
+  message="""
+  Tests complete on <branch> @ <commit-hash>.
+  Result: <e.g. "47 passing, 0 failing">
+  Report: <path or inline summary>
+  Issues found: <list, or "none">
+  Ready for review.
+  """
+)
+```
 
-**The Architect is waiting for your message.** Committing tests and writing a report is not sufficient. If you don't send a message, the pipeline will stall and the Architect will not know you're done.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) checks every turn. If you have an open task assigned to you (owner = your name, status in_progress or pending) and the turn ends without **both** a `TaskUpdate(...completed)` on that task AND a `SendMessage(...)`, the hook will **block your stop** and remind you. If you are still mid-task and intend to continue next turn, send a brief status `SendMessage` so the lead knows you are alive — silence is what stalls the pipeline.
 
-Your message to the Architect must include:
-- Test pass/fail summary (e.g., "All 47 tests passing")
-- Location of testing report
-- Any issues or concerns discovered during testing
-- Confirmation that work is ready for review
+Committing tests and writing a report is not sufficient. If you don't send a message, the pipeline stalls and the Architect will not know you're done.
 
 ## Process
 

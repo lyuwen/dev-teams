@@ -1,0 +1,15 @@
+{
+  "description": "dev-teams plugin hooks. Stop hook enforces completion-protocol for non-lead agents: if they wrote an artifact (review/critique) but didn't TaskUpdate(completed) + SendMessage(architect) in the same turn, block stop and remind.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/completion-protocol.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -111,19 +111,25 @@ Do NOT give another list of findings. The team has already proven it cannot fix 
 
 ## ⚠️ CRITICAL: Completion Protocol
 
-Your work is NOT complete until you complete ALL of these steps:
+Every critique turn MUST end with these two tool calls, in this order, **in the same turn that you wrote the critique document**. Prose like "Task #10 marked completed" is not a substitute — the tool calls must actually fire.
 
-1. ✅ **Write your critique document** with detailed findings
-2. ✅ **Send a message to the Architect** with your verdict and key findings
-3. ✅ **Update task status to completed**
+```
+TaskUpdate(taskId="<your assigned task id>", status="completed")
+SendMessage(
+  to="architect",
+  message="""
+  Verdict: <SOLID | ACCEPTABLE | NEEDS WORK | UNACCEPTABLE>
+  Decision: <merge-now | block | needs-revision>
+  Critique file: .claude/critiques/<feature>.md
+  Critical issues: <bullet list, or "none">
+  Recommended next step: <one line>
+  """
+)
+```
 
-**The Architect is waiting for your message.** Writing critique files alone is not sufficient. If you write files but don't send a message, the pipeline will stall and the Architect will not know you're done.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) inspects the just-finished turn. If you wrote a file under `.claude/critiques/` but did not make both calls above, the hook will **block your stop** and remind you. Do not try to work around it — make the calls.
 
-Your message to the Architect must include:
-- Overall verdict (ACCEPTABLE / SOLID / NEEDS WORK / UNACCEPTABLE)
-- Location of detailed critique file
-- Summary of critical issues (if any)
-- Recommended next steps
+Writing critique files alone is not sufficient. If you write files but don't send a message, the pipeline stalls and the Architect will not know you're done. This has happened before; the hook exists because of it.
 
 ## Process
 

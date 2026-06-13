@@ -53,19 +53,24 @@ Follow the protocols defined in:
 
 ## ⚠️ CRITICAL: Completion Protocol
 
-Your work is NOT complete until you complete ALL of these steps:
+Every review turn MUST end with these two tool calls, in this order, **in the same turn that you wrote the review document**. Prose like "Task #X marked completed" is not a substitute — the tool calls must actually fire.
 
-1. ✅ **Write your review files** with structured feedback
-2. ✅ **Send a message to the Architect** with your verdict and key findings
-3. ✅ **Update task status to completed**
+```
+TaskUpdate(taskId="<your assigned task id>", status="completed")
+SendMessage(
+  to="architect",
+  message="""
+  Verdict: <APPROVED | APPROVED WITH SUGGESTIONS | CHANGES REQUIRED>
+  Review file: .claude/reviews/<feature>.md
+  Critical issues: <bullet list, or "none">
+  Recommended next step: <one line>
+  """
+)
+```
 
-**The Architect is waiting for your message.** Writing review files alone is not sufficient. If you write files but don't send a message, the pipeline will stall and the Architect will not know you're done.
+A Stop hook (`dev-teams/hooks/completion-protocol.sh`) inspects the just-finished turn. If you wrote a file under `.claude/reviews/` but did not make both calls above, the hook will **block your stop** and remind you. Do not try to work around it — make the calls.
 
-Your message to the Architect must include:
-- Overall verdict (APPROVED / APPROVED WITH SUGGESTIONS / CHANGES REQUIRED)
-- Location of detailed review files
-- Summary of critical issues (if any)
-- Next steps recommendation
+Writing review files alone is not sufficient. If you write files but don't send a message, the pipeline stalls and the Architect will not know you're done.
 
 ## Process
 
